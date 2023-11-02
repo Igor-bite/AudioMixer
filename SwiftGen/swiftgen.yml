@@ -1,0 +1,16 @@
+input_dir: ../AudioMixer/Resources
+output_dir: ../AudioMixer/Resources/Generated
+
+xcassets:
+  inputs:
+    - Assets.xcassets
+  outputs:
+    templateName: swift5
+    output: Assets.swift
+
+#files:
+#  inputs:
+#    - /Audio
+#  outputs:
+#    templateName: structured-swift5
+#    output: Audio.swift

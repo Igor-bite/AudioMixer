@@ -1,0 +1,10 @@
+#!/bin/sh
+
+run_check() {
+    swiftformat/git-format-staged --formatter "./swiftformat/swiftformat --lint --config './.swiftformat' stdin --stdinpath '{}'" "*.swift" 2> /dev/null && \
+    exit 0 || swiftformat/format && echo "SwiftFormatter 
+doesn't like your formatting and already fixed it" && \
+    exit 0
+}
+
+run_check
