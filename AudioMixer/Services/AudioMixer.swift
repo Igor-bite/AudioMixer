@@ -36,6 +36,9 @@ final class AudioMixer: AudioControlling {
   private var playerNodes = [LayerModel: AVAudioPlayerNode]()
   private var mixerNodeInputBusCache = [LayerModel: AVAudioNodeBus]()
 
+  private lazy var previewPlayerNode = makePreviewPlayerNode()
+  private lazy var layersMixerNode = AVAudioMixerNode()
+
   var isRunning: Bool {
     audioEngine.isRunning
   }
@@ -54,6 +57,9 @@ final class AudioMixer: AudioControlling {
   }
 
   func play(_ layer: LayerModel) {
+    if !isRunning {
+      setupAudioEngine()
+    }
     let player = getPlayerNode(for: layer)
     player.play(layer: layer)
   }
@@ -90,26 +96,31 @@ final class AudioMixer: AudioControlling {
 
   func playedTime(_ layer: LayerModel) -> Double {
     guard let node = playerNodes[layer] else { return .zero }
+    // TODO: fix
     return 0.8
   }
 
-  func pause() {
-    audioEngine.pause()
+  func pauseAll() {
+    for layer in playerNodes.keys {
+      pause(layer)
+    }
   }
 
-  func start() {
-    try? audioEngine.start()
+  func playAll() {
+    for layer in playerNodes.keys {
+      play(layer)
+    }
   }
 
   var outputFile: AVAudioFile?
   let writingQueue = DispatchQueue(label: "sample_recording.queue")
 
   func installTap() {
-    let maxFrameCount: AVAudioFrameCount = 4096
-    audioEngine.mainMixerNode.installTap(
+    let maxFrameCount: AVAudioFrameCount = 4410
+    layersMixerNode.installTap(
       onBus: .zero,
       bufferSize: maxFrameCount,
-      format: audioEngine.mainMixerNode.outputFormat(forBus: .zero)
+      format: layersMixerNode.outputFormat(forBus: .zero)
     ) { buffer, time in
       self.writingQueue.async { [weak self] in
         guard let outputFile = self?.outputFile else { return }
@@ -145,7 +156,7 @@ final class AudioMixer: AudioControlling {
         self.outputFile = outputFile
       }
     } else {
-      pause()
+      pauseAll()
       writingQueue.async { [weak self] in
         guard let self,
               let file = outputFile
@@ -154,6 +165,33 @@ final class AudioMixer: AudioControlling {
         outputFile = nil
       }
     }
+  }
+
+  func playPreview(for layer: LayerModel) {
+    if previewPlayerNode.isPlaying {
+      previewPlayerNode.stop()
+    }
+    previewPlayerNode.play(layer: layer)
+  }
+
+  func stopPreview(for layer: LayerModel) {
+    if previewPlayerNode.isPlaying {
+      previewPlayerNode.stop()
+    }
+  }
+
+  private func makePreviewPlayerNode() -> AVAudioPlayerNode {
+    let node = AVAudioPlayerNode()
+    audioEngine.attach(node)
+    audioEngine.connect(
+      node,
+      to: audioEngine.mainMixerNode,
+      fromBus: .zero,
+      toBus: 1,
+      format: nil
+    )
+    audioEngine.prepare()
+    return node
   }
 
   private func getPlayerNode(for layer: LayerModel) -> AVAudioPlayerNode {
@@ -170,7 +208,7 @@ final class AudioMixer: AudioControlling {
     let mixerNodeInputBus = mixerNodeInputBus(for: layer)
     audioEngine.connect(
       node,
-      to: audioEngine.mainMixerNode,
+      to: layersMixerNode,
       fromBus: .zero,
       toBus: mixerNodeInputBus,
       format: nil
@@ -214,6 +252,8 @@ final class AudioMixer: AudioControlling {
   private func setupAudioEngine() {
     changeOutputToSpeaker()
 
+    audioEngine.attach(layersMixerNode)
+    audioEngine.connect(layersMixerNode, to: audioEngine.mainMixerNode, fromBus: .zero, toBus: .zero, format: nil)
     audioEngine.connect(audioEngine.mainMixerNode, to: audioEngine.outputNode, fromBus: .zero, toBus: .zero, format: nil)
     audioEngine.prepare()
 
@@ -234,18 +274,16 @@ final class AudioMixer: AudioControlling {
 
 extension AVAudioPlayerNode {
   func play(layer: LayerModel) {
+    guard !isPlaying else { return }
     play(file: layer.audioFile)
   }
 
   func play(file: AVAudioFile?) {
-    guard let audioFile = file else {
-      Logger.log("Audio file not found")
-      return
-    }
+    guard let audioFile = file,
+          let buffer = try? AVAudioPCMBuffer(file: audioFile)
+    else { return }
 
-    scheduleFile(audioFile, at: AVAudioTime(hostTime: .zero)) { [weak self] in
-      self?.play(file: audioFile)
-    }
+    scheduleBuffer(buffer, at: nil, options: .loops)
     play()
   }
 }

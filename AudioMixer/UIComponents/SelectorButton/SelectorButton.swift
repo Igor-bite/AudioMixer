@@ -17,7 +17,8 @@ final class SelectorButton: UIView {
     let itemTextColor: UIColor
     let items: [Item]
     let tapAction: Action
-    let hoverAction: (_ itemIndex: Int) -> Void
+    let closeWithoutSelectionAction: Action
+    let hoverAction: (_ itemIndex: Int?) -> Void
     let selectAction: (_ itemIndex: Int) -> Void
   }
 
@@ -157,12 +158,15 @@ final class SelectorButton: UIView {
         guard let itemIndex = view.itemIndex else { return }
         model.selectAction(itemIndex)
         selectedItem?.shouldDeselect()
+      } else {
+        model.closeWithoutSelectionAction()
       }
       setState(false)
     case .changed:
       let point = sender.location(in: self)
       if !self.point(inside: point, with: nil) {
         setState(false)
+        model.closeWithoutSelectionAction()
       }
       if let view = itemsStack.hitTest(convert(point, to: itemsStack), with: nil) as? SelectorButtonItem {
         guard selectedItem != view else { return }
@@ -174,6 +178,7 @@ final class SelectorButton: UIView {
       } else {
         selectedItem?.shouldDeselect()
         selectedItem = nil
+        model.hoverAction(nil)
       }
     default:
       break

@@ -3,10 +3,11 @@
 import AVFoundation
 import Foundation
 
-enum SampleType {
+enum SampleType: String {
   case guitar
   case trumpet
-  case drums
+  case drum
+  case voice
 }
 
 final class LayerModel: Hashable {
@@ -28,13 +29,14 @@ final class LayerModel: Hashable {
     id: UUID = .init(),
     name: String,
     audioFileUrl: URL,
-    isMuted: Bool
+    isMuted: Bool,
+    sampleType: SampleType
   ) {
     self.id = id
     self.name = name
     self.audioFileUrl = audioFileUrl
     self.isMuted = isMuted
-    self.sampleType = .guitar
+    self.sampleType = sampleType
   }
 
   static func == (lhs: LayerModel, rhs: LayerModel) -> Bool {

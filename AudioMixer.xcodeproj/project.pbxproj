@@ -9,7 +9,7 @@
 /* Begin PBXBuildFile section */
 		0A22C20F2AF443C100AC88D2 /* ScreenAssembly.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A22C20E2AF443C100AC88D2 /* ScreenAssembly.swift */; };
 		0A22C2162AF446D500AC88D2 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A22C2152AF446D500AC88D2 /* Logger.swift */; };
-		0A22C2182AF4495A00AC88D2 /* sample_2.wav in Resources */ = {isa = PBXBuildFile; fileRef = 0A22C2172AF4495A00AC88D2 /* sample_2.wav */; };
+		0A22C2182AF4495A00AC88D2 /* guitar_2.wav in Resources */ = {isa = PBXBuildFile; fileRef = 0A22C2172AF4495A00AC88D2 /* guitar_2.wav */; };
 		0A22C21E2AF454AE00AC88D2 /* WaveformAnalyzer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A22C21D2AF454AE00AC88D2 /* WaveformAnalyzer.swift */; };
 		0A22C2202AF4598500AC88D2 /* WaveformImageDrawer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A22C21F2AF4598500AC88D2 /* WaveformImageDrawer.swift */; };
 		0A22C2262AF45D4200AC88D2 /* WaveformStubView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A22C2222AF45D4200AC88D2 /* WaveformStubView.swift */; };
@@ -25,15 +25,24 @@
 		0A22C23A2AF55A7600AC88D2 /* Action.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A22C2392AF55A7600AC88D2 /* Action.swift */; };
 		0A22C23C2AF5920300AC88D2 /* UIStackViewExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A22C23B2AF5920300AC88D2 /* UIStackViewExtensions.swift */; };
 		0A22C23E2AF5956300AC88D2 /* ArrayExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A22C23D2AF5956300AC88D2 /* ArrayExtensions.swift */; };
-		0A22C2432AF5980800AC88D2 /* sample_5.wav in Resources */ = {isa = PBXBuildFile; fileRef = 0A22C23F2AF5980700AC88D2 /* sample_5.wav */; };
-		0A22C2442AF5980800AC88D2 /* sample_4.wav in Resources */ = {isa = PBXBuildFile; fileRef = 0A22C2402AF5980700AC88D2 /* sample_4.wav */; };
-		0A22C2452AF5980800AC88D2 /* sample_3.wav in Resources */ = {isa = PBXBuildFile; fileRef = 0A22C2412AF5980800AC88D2 /* sample_3.wav */; };
-		0A22C2462AF5980800AC88D2 /* sample_1.wav in Resources */ = {isa = PBXBuildFile; fileRef = 0A22C2422AF5980800AC88D2 /* sample_1.wav */; };
+		0A22C2432AF5980800AC88D2 /* guitar_5.wav in Resources */ = {isa = PBXBuildFile; fileRef = 0A22C23F2AF5980700AC88D2 /* guitar_5.wav */; };
+		0A22C2442AF5980800AC88D2 /* guitar_4.wav in Resources */ = {isa = PBXBuildFile; fileRef = 0A22C2402AF5980700AC88D2 /* guitar_4.wav */; };
+		0A22C2452AF5980800AC88D2 /* guitar_3.wav in Resources */ = {isa = PBXBuildFile; fileRef = 0A22C2412AF5980800AC88D2 /* guitar_3.wav */; };
+		0A22C2462AF5980800AC88D2 /* guitar_1.wav in Resources */ = {isa = PBXBuildFile; fileRef = 0A22C2422AF5980800AC88D2 /* guitar_1.wav */; };
 		0A22C2492AF59BD700AC88D2 /* LayersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A22C2482AF59BD700AC88D2 /* LayersView.swift */; };
 		0A22C24B2AF59C7B00AC88D2 /* LayerModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A22C24A2AF59C7B00AC88D2 /* LayerModel.swift */; };
 		0A22C24D2AF5A24D00AC88D2 /* LayerCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A22C24C2AF5A24D00AC88D2 /* LayerCell.swift */; };
 		0A22C24F2AF5B21300AC88D2 /* AudioMixer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A22C24E2AF5B21300AC88D2 /* AudioMixer.swift */; };
 		0A22C2512AF6769B00AC88D2 /* MicrophoneAudioRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A22C2502AF6769B00AC88D2 /* MicrophoneAudioRecorder.swift */; };
+		0A22C25A2AF6999100AC88D2 /* drum_3.wav in Resources */ = {isa = PBXBuildFile; fileRef = 0A22C2522AF6999000AC88D2 /* drum_3.wav */; };
+		0A22C25B2AF6999100AC88D2 /* drum_1.wav in Resources */ = {isa = PBXBuildFile; fileRef = 0A22C2532AF6999000AC88D2 /* drum_1.wav */; };
+		0A22C25C2AF6999100AC88D2 /* drum_2.wav in Resources */ = {isa = PBXBuildFile; fileRef = 0A22C2542AF6999000AC88D2 /* drum_2.wav */; };
+		0A22C25D2AF6999100AC88D2 /* drum_4.wav in Resources */ = {isa = PBXBuildFile; fileRef = 0A22C2552AF6999000AC88D2 /* drum_4.wav */; };
+		0A22C25E2AF6999100AC88D2 /* trumpet_3.wav in Resources */ = {isa = PBXBuildFile; fileRef = 0A22C2562AF6999000AC88D2 /* trumpet_3.wav */; };
+		0A22C25F2AF6999100AC88D2 /* trumpet_1.wav in Resources */ = {isa = PBXBuildFile; fileRef = 0A22C2572AF6999100AC88D2 /* trumpet_1.wav */; };
+		0A22C2602AF6999100AC88D2 /* trumpet_2.wav in Resources */ = {isa = PBXBuildFile; fileRef = 0A22C2582AF6999100AC88D2 /* trumpet_2.wav */; };
+		0A22C2612AF6999100AC88D2 /* trumpet_4.wav in Resources */ = {isa = PBXBuildFile; fileRef = 0A22C2592AF6999100AC88D2 /* trumpet_4.wav */; };
+		0A22C2642AF6E8BB00AC88D2 /* AVAudioPCMBuffer+Processing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A22C2632AF6E8BA00AC88D2 /* AVAudioPCMBuffer+Processing.swift */; };
 		0A35D8502AF42B5400E283B5 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A35D84F2AF42B5400E283B5 /* AppDelegate.swift */; };
 		0A35D8592AF42B5600E283B5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0A35D8582AF42B5600E283B5 /* Assets.xcassets */; };
 		0A35D85C2AF42B5600E283B5 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0A35D85A2AF42B5600E283B5 /* LaunchScreen.storyboard */; };
@@ -43,7 +52,7 @@
 /* Begin PBXFileReference section */
 		0A22C20E2AF443C100AC88D2 /* ScreenAssembly.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenAssembly.swift; sourceTree = "<group>"; };
 		0A22C2152AF446D500AC88D2 /* Logger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
-		0A22C2172AF4495A00AC88D2 /* sample_2.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = sample_2.wav; sourceTree = "<group>"; };
+		0A22C2172AF4495A00AC88D2 /* guitar_2.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = guitar_2.wav; sourceTree = "<group>"; };
 		0A22C21D2AF454AE00AC88D2 /* WaveformAnalyzer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WaveformAnalyzer.swift; sourceTree = "<group>"; };
 		0A22C21F2AF4598500AC88D2 /* WaveformImageDrawer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WaveformImageDrawer.swift; sourceTree = "<group>"; };
 		0A22C2222AF45D4200AC88D2 /* WaveformStubView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WaveformStubView.swift; sourceTree = "<group>"; };
@@ -58,15 +67,24 @@
 		0A22C2392AF55A7600AC88D2 /* Action.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Action.swift; sourceTree = "<group>"; };
 		0A22C23B2AF5920300AC88D2 /* UIStackViewExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIStackViewExtensions.swift; sourceTree = "<group>"; };
 		0A22C23D2AF5956300AC88D2 /* ArrayExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArrayExtensions.swift; sourceTree = "<group>"; };
-		0A22C23F2AF5980700AC88D2 /* sample_5.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = sample_5.wav; sourceTree = "<group>"; };
-		0A22C2402AF5980700AC88D2 /* sample_4.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = sample_4.wav; sourceTree = "<group>"; };
-		0A22C2412AF5980800AC88D2 /* sample_3.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = sample_3.wav; sourceTree = "<group>"; };
-		0A22C2422AF5980800AC88D2 /* sample_1.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = sample_1.wav; sourceTree = "<group>"; };
+		0A22C23F2AF5980700AC88D2 /* guitar_5.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = guitar_5.wav; sourceTree = "<group>"; };
+		0A22C2402AF5980700AC88D2 /* guitar_4.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = guitar_4.wav; sourceTree = "<group>"; };
+		0A22C2412AF5980800AC88D2 /* guitar_3.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = guitar_3.wav; sourceTree = "<group>"; };
+		0A22C2422AF5980800AC88D2 /* guitar_1.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = guitar_1.wav; sourceTree = "<group>"; };
 		0A22C2482AF59BD700AC88D2 /* LayersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LayersView.swift; sourceTree = "<group>"; };
 		0A22C24A2AF59C7B00AC88D2 /* LayerModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LayerModel.swift; sourceTree = "<group>"; };
 		0A22C24C2AF5A24D00AC88D2 /* LayerCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LayerCell.swift; sourceTree = "<group>"; };
 		0A22C24E2AF5B21300AC88D2 /* AudioMixer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioMixer.swift; sourceTree = "<group>"; };
 		0A22C2502AF6769B00AC88D2 /* MicrophoneAudioRecorder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MicrophoneAudioRecorder.swift; sourceTree = "<group>"; };
+		0A22C2522AF6999000AC88D2 /* drum_3.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = drum_3.wav; sourceTree = "<group>"; };
+		0A22C2532AF6999000AC88D2 /* drum_1.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = drum_1.wav; sourceTree = "<group>"; };
+		0A22C2542AF6999000AC88D2 /* drum_2.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = drum_2.wav; sourceTree = "<group>"; };
+		0A22C2552AF6999000AC88D2 /* drum_4.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = drum_4.wav; sourceTree = "<group>"; };
+		0A22C2562AF6999000AC88D2 /* trumpet_3.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = trumpet_3.wav; sourceTree = "<group>"; };
+		0A22C2572AF6999100AC88D2 /* trumpet_1.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = trumpet_1.wav; sourceTree = "<group>"; };
+		0A22C2582AF6999100AC88D2 /* trumpet_2.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = trumpet_2.wav; sourceTree = "<group>"; };
+		0A22C2592AF6999100AC88D2 /* trumpet_4.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = trumpet_4.wav; sourceTree = "<group>"; };
+		0A22C2632AF6E8BA00AC88D2 /* AVAudioPCMBuffer+Processing.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "AVAudioPCMBuffer+Processing.swift"; sourceTree = "<group>"; };
 		0A35D84C2AF42B5400E283B5 /* AudioMixer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AudioMixer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0A35D84F2AF42B5400E283B5 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		0A35D8582AF42B5600E283B5 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -129,6 +147,7 @@
 		0A22C2122AF4463000AC88D2 /* Audio */ = {
 			isa = PBXGroup;
 			children = (
+				0A22C2622AF6999400AC88D2 /* Trumpet */,
 				0A22C21A2AF450EC00AC88D2 /* Drums */,
 				0A22C2192AF450E400AC88D2 /* Guitar */,
 			);
@@ -138,11 +157,11 @@
 		0A22C2192AF450E400AC88D2 /* Guitar */ = {
 			isa = PBXGroup;
 			children = (
-				0A22C2422AF5980800AC88D2 /* sample_1.wav */,
-				0A22C2172AF4495A00AC88D2 /* sample_2.wav */,
-				0A22C2412AF5980800AC88D2 /* sample_3.wav */,
-				0A22C2402AF5980700AC88D2 /* sample_4.wav */,
-				0A22C23F2AF5980700AC88D2 /* sample_5.wav */,
+				0A22C2422AF5980800AC88D2 /* guitar_1.wav */,
+				0A22C2172AF4495A00AC88D2 /* guitar_2.wav */,
+				0A22C2412AF5980800AC88D2 /* guitar_3.wav */,
+				0A22C2402AF5980700AC88D2 /* guitar_4.wav */,
+				0A22C23F2AF5980700AC88D2 /* guitar_5.wav */,
 			);
 			path = Guitar;
 			sourceTree = "<group>";
@@ -150,6 +169,10 @@
 		0A22C21A2AF450EC00AC88D2 /* Drums */ = {
 			isa = PBXGroup;
 			children = (
+				0A22C2532AF6999000AC88D2 /* drum_1.wav */,
+				0A22C2542AF6999000AC88D2 /* drum_2.wav */,
+				0A22C2522AF6999000AC88D2 /* drum_3.wav */,
+				0A22C2552AF6999000AC88D2 /* drum_4.wav */,
 			);
 			path = Drums;
 			sourceTree = "<group>";
@@ -168,6 +191,7 @@
 		0A22C2312AF54BDD00AC88D2 /* Utils */ = {
 			isa = PBXGroup;
 			children = (
+				0A22C2632AF6E8BA00AC88D2 /* AVAudioPCMBuffer+Processing.swift */,
 				0A22C23B2AF5920300AC88D2 /* UIStackViewExtensions.swift */,
 				0A22C23D2AF5956300AC88D2 /* ArrayExtensions.swift */,
 				0A22C2342AF550EA00AC88D2 /* Insets.swift */,
@@ -194,6 +218,17 @@
 				0A22C24A2AF59C7B00AC88D2 /* LayerModel.swift */,
 			);
 			path = LayersView;
+			sourceTree = "<group>";
+		};
+		0A22C2622AF6999400AC88D2 /* Trumpet */ = {
+			isa = PBXGroup;
+			children = (
+				0A22C2572AF6999100AC88D2 /* trumpet_1.wav */,
+				0A22C2582AF6999100AC88D2 /* trumpet_2.wav */,
+				0A22C2562AF6999000AC88D2 /* trumpet_3.wav */,
+				0A22C2592AF6999100AC88D2 /* trumpet_4.wav */,
+			);
+			path = Trumpet;
 			sourceTree = "<group>";
 		};
 		0A35D8432AF42B5400E283B5 = {
@@ -319,13 +354,21 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0A22C2442AF5980800AC88D2 /* sample_4.wav in Resources */,
-				0A22C2452AF5980800AC88D2 /* sample_3.wav in Resources */,
-				0A22C2462AF5980800AC88D2 /* sample_1.wav in Resources */,
-				0A22C2432AF5980800AC88D2 /* sample_5.wav in Resources */,
+				0A22C2442AF5980800AC88D2 /* guitar_4.wav in Resources */,
+				0A22C2612AF6999100AC88D2 /* trumpet_4.wav in Resources */,
+				0A22C2452AF5980800AC88D2 /* guitar_3.wav in Resources */,
+				0A22C2462AF5980800AC88D2 /* guitar_1.wav in Resources */,
+				0A22C25E2AF6999100AC88D2 /* trumpet_3.wav in Resources */,
+				0A22C2432AF5980800AC88D2 /* guitar_5.wav in Resources */,
+				0A22C25B2AF6999100AC88D2 /* drum_1.wav in Resources */,
+				0A22C25F2AF6999100AC88D2 /* trumpet_1.wav in Resources */,
 				0A35D85C2AF42B5600E283B5 /* LaunchScreen.storyboard in Resources */,
-				0A22C2182AF4495A00AC88D2 /* sample_2.wav in Resources */,
+				0A22C25C2AF6999100AC88D2 /* drum_2.wav in Resources */,
+				0A22C2602AF6999100AC88D2 /* trumpet_2.wav in Resources */,
+				0A22C2182AF4495A00AC88D2 /* guitar_2.wav in Resources */,
+				0A22C25A2AF6999100AC88D2 /* drum_3.wav in Resources */,
 				0A35D8592AF42B5600E283B5 /* Assets.xcassets in Resources */,
+				0A22C25D2AF6999100AC88D2 /* drum_4.wav in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -382,6 +425,7 @@
 				0A22C2332AF54C8400AC88D2 /* UIViewExtensions.swift in Sources */,
 				0A22C24B2AF59C7B00AC88D2 /* LayerModel.swift in Sources */,
 				0A22C2282AF45D4200AC88D2 /* BarView.swift in Sources */,
+				0A22C2642AF6E8BB00AC88D2 /* AVAudioPCMBuffer+Processing.swift in Sources */,
 				0A22C2162AF446D500AC88D2 /* Logger.swift in Sources */,
 				0A35D8502AF42B5400E283B5 /* AppDelegate.swift in Sources */,
 				0A22C23E2AF5956300AC88D2 /* ArrayExtensions.swift in Sources */,

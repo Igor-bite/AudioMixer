@@ -10,6 +10,9 @@ final class MusicEditorViewController: UIViewController {
   private let audioRecorder = MicrophoneAudioRecorder()
   private var previewLayerPlaying: LayerModel?
 
+  private var shouldRecord = false
+  private var isAllPlaying = false
+
   private lazy var guitarSelector = SelectorButton(model: SelectorButton.Model(
     title: "гитара",
     image: Asset.guitar.image,
@@ -24,12 +27,28 @@ final class MusicEditorViewController: UIViewController {
       .init(title: "сэмпл 4"),
       .init(title: "сэмпл 5"),
     ],
-    tapAction: guitarTapped,
+    tapAction: { [weak self] in
+      self?.selectorTapped(type: .guitar)
+    },
+    closeWithoutSelectionAction: { [weak self] in
+      guard let self,
+            let previewLayerPlaying
+      else { return }
+      audioMixer.stopPreview(for: previewLayerPlaying)
+    },
     hoverAction: { [weak self] index in
-      self?.playSample(index: index)
+      guard let index else {
+        guard let self,
+              let previewLayerPlaying
+        else { return }
+        audioMixer.stopPreview(for: previewLayerPlaying)
+        self.previewLayerPlaying = nil
+        return
+      }
+      self?.playSample(index: index, type: .guitar)
     },
     selectAction: { [weak self] index in
-      self?.sampleSelected(at: index)
+      self?.sampleSelected(at: index, type: .guitar)
     }
   ))
 
@@ -45,11 +64,30 @@ final class MusicEditorViewController: UIViewController {
       .init(title: "сэмпл 2"),
       .init(title: "сэмпл 3"),
       .init(title: "сэмпл 4"),
-      .init(title: "сэмпл 5"),
     ],
-    tapAction: guitarTapped,
-    hoverAction: { _ in },
-    selectAction: { _ in }
+    tapAction: { [weak self] in
+      self?.selectorTapped(type: .drum)
+    },
+    closeWithoutSelectionAction: { [weak self] in
+      guard let self,
+            let previewLayerPlaying
+      else { return }
+      audioMixer.stopPreview(for: previewLayerPlaying)
+    },
+    hoverAction: { [weak self] index in
+      guard let index else {
+        guard let self,
+              let previewLayerPlaying
+        else { return }
+        audioMixer.stopPreview(for: previewLayerPlaying)
+        self.previewLayerPlaying = nil
+        return
+      }
+      self?.playSample(index: index, type: .drum)
+    },
+    selectAction: { [weak self] index in
+      self?.sampleSelected(at: index, type: .drum)
+    }
   ))
 
   private lazy var trumpetSelector = SelectorButton(model: SelectorButton.Model(
@@ -64,14 +102,38 @@ final class MusicEditorViewController: UIViewController {
       .init(title: "сэмпл 2"),
       .init(title: "сэмпл 3"),
       .init(title: "сэмпл 4"),
-      .init(title: "сэмпл 5"),
     ],
-    tapAction: guitarTapped,
-    hoverAction: { _ in },
-    selectAction: { _ in }
+    tapAction: { [weak self] in
+      self?.selectorTapped(type: .trumpet)
+    },
+    closeWithoutSelectionAction: { [weak self] in
+      guard let self,
+            let previewLayerPlaying
+      else { return }
+      audioMixer.stopPreview(for: previewLayerPlaying)
+    },
+    hoverAction: { [weak self] index in
+      guard let index else {
+        guard let self,
+              let previewLayerPlaying
+        else { return }
+        audioMixer.stopPreview(for: previewLayerPlaying)
+        self.previewLayerPlaying = nil
+        return
+      }
+      self?.playSample(index: index, type: .trumpet)
+    },
+    selectAction: { [weak self] index in
+      self?.sampleSelected(at: index, type: .trumpet)
+    }
   ))
 
-  private lazy var layersView = LayersView(audioController: audioMixer)
+  private lazy var layersView = {
+    let view = LayersView(audioController: audioMixer)
+    view.alpha = .zero
+    return view
+  }()
+
   private var layersHeightConstraint: ConstraintMakerEditable?
 
   private lazy var recordMicrophoneButton = {
@@ -142,6 +204,8 @@ final class MusicEditorViewController: UIViewController {
     super.viewDidLoad()
 
     setupUI()
+
+    navigationController?.navigationBar.isHidden = true
   }
 
   private func setupUI() {
@@ -193,32 +257,36 @@ final class MusicEditorViewController: UIViewController {
     }
   }
 
-  private func guitarTapped() {
-    guard let layer = layerModel(from: .zero) else { return }
+  private func selectorTapped(type: SampleType) {
+    guard let layer = layerModel(from: .zero, type: type) else { return }
     audioMixer.play(layer)
     layersView.addLayer(layer)
   }
 
-  private func playSample(index: Int) {
-    guard let layer = layerModel(from: index),
+  private func playSample(index: Int, type: SampleType) {
+    guard let layer = layerModel(from: index, type: type),
           previewLayerPlaying != layer
     else { return }
     if let previewLayerPlaying {
-      audioMixer.stop(previewLayerPlaying)
+      audioMixer.stopPreview(for: previewLayerPlaying)
     }
     previewLayerPlaying = layer
-    audioMixer.play(layer)
+    audioMixer.playPreview(for: layer)
   }
 
-  private func sampleSelected(at index: Int) {
-    guard let layer = previewLayerPlaying ?? layerModel(from: index) else { return }
-    previewLayerPlaying = nil
+  private func sampleSelected(at index: Int, type: SampleType) {
+    guard let layer = layerModel(from: index, type: type) else { return }
+    if let previewLayerPlaying {
+      audioMixer.stopPreview(for: previewLayerPlaying)
+      self.previewLayerPlaying = nil
+    }
+    audioMixer.play(layer)
     layersView.addLayer(layer)
   }
 
-  private func layerModel(from sampleIndex: Int) -> LayerModel? {
-    let sample = "sample_\(sampleIndex + 1).wav"
-    guard let audioFileUrl = Bundle.main.url(forResource: sample, withExtension: nil)
+  private func layerModel(from sampleIndex: Int, type: SampleType) -> LayerModel? {
+    let sample = "\(type.rawValue)_\(sampleIndex + 1)"
+    guard let audioFileUrl = Bundle.main.url(forResource: sample, withExtension: "wav")
     else {
       Logger.log("Audio file was not found")
       return nil
@@ -227,7 +295,8 @@ final class MusicEditorViewController: UIViewController {
     return LayerModel(
       name: sample,
       audioFileUrl: audioFileUrl,
-      isMuted: false
+      isMuted: false,
+      sampleType: type
     )
   }
 
@@ -243,8 +312,6 @@ final class MusicEditorViewController: UIViewController {
       audioRecorder.record()
     }
   }
-
-  var shouldRecord = false
 
   @objc
   private func recordSampleTapped() {
@@ -264,10 +331,14 @@ final class MusicEditorViewController: UIViewController {
 
   @objc
   private func playPauseTapped() {
-    if audioMixer.isRunning {
-      audioMixer.pause()
+    if isAllPlaying {
+      audioMixer.pauseAll()
+      isAllPlaying = false
+      playPauseButton.setImage(Asset.play.image, for: .normal)
     } else {
-      audioMixer.start()
+      audioMixer.playAll()
+      isAllPlaying = true
+      playPauseButton.setImage(Asset.pause.image, for: .normal)
     }
   }
 

@@ -75,7 +75,8 @@ final class MicrophoneAudioRecorder {
     return LayerModel(
       name: name,
       audioFileUrl: fileUrl,
-      isMuted: false
+      isMuted: false,
+      sampleType: .voice
     )
   }
 }
