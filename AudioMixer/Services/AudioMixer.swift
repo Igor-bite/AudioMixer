@@ -95,9 +95,18 @@ final class AudioMixer: AudioControlling {
   }
 
   func playedTime(_ layer: LayerModel) -> Double {
-    guard let node = playerNodes[layer] else { return .zero }
-    // TODO: fix
-    return 0.8
+    guard let node = playerNodes[layer],
+          let lastRenderTime = node.lastRenderTime,
+          let playerTime = node.playerTime(forNodeTime: lastRenderTime)
+    else { return .zero }
+
+    let sampleTime = playerTime.sampleTime
+    let sampleRate = playerTime.sampleRate
+    let currentTime = Double(sampleTime) / sampleRate
+    let duration = layer.duration
+    let fullLoops = (currentTime / duration).rounded(.down)
+    let currentDuration = currentTime - fullLoops * duration
+    return currentDuration
   }
 
   func pauseAll() {

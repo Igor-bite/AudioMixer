@@ -36,7 +36,7 @@ final class LayerCell: UICollectionViewCell {
 
   private lazy var progressView = {
     let view = UIView()
-    view.backgroundColor = .clear // UIColor(red: 0.66, green: 0.858, blue: 0.064, alpha: 1)
+    view.backgroundColor = UIColor(red: 0.66, green: 0.858, blue: 0.064, alpha: 1)
     view.clipsToBounds = true
     return view
   }()
@@ -46,7 +46,6 @@ final class LayerCell: UICollectionViewCell {
   private var layerModel: LayerModel?
   private var deleteAction: Action?
   private var audioController: AudioControlling?
-  private var displayLink: CADisplayLink?
 
   override init(frame: CGRect) {
     super.init(frame: frame)
@@ -69,6 +68,8 @@ final class LayerCell: UICollectionViewCell {
     titleLabel.text = model.name
     updateMuteState()
     updatePlayingState()
+
+    progressView.transform = CGAffineTransform(translationX: -progressMaxWidth, y: .zero)
   }
 
   @objc
@@ -107,20 +108,35 @@ final class LayerCell: UICollectionViewCell {
     let isPlaying = audioController.isLayerPlaying(layerModel)
     let playPauseImage = isPlaying ? Asset.pause.image : Asset.play.image
     playPauseButton.setImage(playPauseImage, for: .normal)
-    updatePlayingProgress()
+    displayLink.isPaused = !isPlaying
   }
 
+  private lazy var displayLink = createDisplayLink()
+  private var progressMaxWidth: CGFloat {
+    frame.width - 100
+  }
+
+  @objc
   private func updatePlayingProgress() {
     guard let layerModel,
           let audioController,
           audioController.isLayerPlaying(layerModel)
     else { return }
 
-//    progressWidthConstraint?.offset(-frame.width)
-//    UIView.animate(withDuration: 5.0) { [weak self] in
-//      self?.progressView.transform = CGAffineTransform(scaleX: 1, y: .zero)
-//      self?.progressView.backgroundColor = .red
-//    }
+    let duration = audioController.playedTime(layerModel)
+    let progress = duration / layerModel.duration
+
+    UIView.animate(withDuration: progress == 0 ? 0 : 0.1) { [weak self] in
+      guard let self else { return }
+      progressView.transform = CGAffineTransform(translationX: -progressMaxWidth * (1 - progress), y: .zero)
+    }
+  }
+
+  private func createDisplayLink() -> CADisplayLink {
+    let displayLink = CADisplayLink(target: self, selector: #selector(updatePlayingProgress))
+    displayLink.add(to: .current, forMode: .default)
+    displayLink.isPaused = true
+    return displayLink
   }
 
   private func setupUI() {
@@ -131,7 +147,7 @@ final class LayerCell: UICollectionViewCell {
 
     progressView.snp.makeConstraints { make in
       make.left.top.bottom.equalToSuperview()
-      progressWidthConstraint = make.right.equalTo(playPauseButton.snp.left)
+      progressWidthConstraint = make.width.equalToSuperview().offset(-100)
     }
 
     titleLabel.snp.makeConstraints { make in

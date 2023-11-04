@@ -37,8 +37,8 @@ final class MicrophoneAudioRecorder {
 
     let settings = [
       AVFormatIDKey: Int(kAudioFormatMPEG4AAC),
-      AVSampleRateKey: 12000,
       AVNumberOfChannelsKey: 1,
+      AVSampleRateKey: 4410,
       AVEncoderAudioQualityKey: AVAudioQuality.high.rawValue,
     ]
 
