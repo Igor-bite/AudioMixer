@@ -10,7 +10,9 @@ protocol AudioControlling {
   func pause(_ layer: LayerModel)
   func togglePlayingState(for layer: LayerModel)
   func setVolume(for layer: LayerModel, volume: Float)
+  func setRate(for layer: LayerModel, rate: Float)
   func isLayerPlaying(_ layer: LayerModel) -> Bool
+  func playedTime(_ layer: LayerModel) -> Double
 }
 
 extension AudioControlling {
@@ -63,9 +65,19 @@ final class AudioMixer: AudioControlling {
     node.volume = volume
   }
 
+  func setRate(for layer: LayerModel, rate: Float) {
+    guard let node = playerNodes[layer] else { return }
+    node.rate = rate
+  }
+
   func isLayerPlaying(_ layer: LayerModel) -> Bool {
     guard let node = playerNodes[layer] else { return false }
     return node.isPlaying
+  }
+
+  func playedTime(_ layer: LayerModel) -> Double {
+    guard let node = playerNodes[layer] else { return .zero }
+    return 0.8
   }
 
   private func getPlayerNode(for layer: LayerModel) -> AVAudioPlayerNode {
@@ -131,22 +143,17 @@ final class AudioMixer: AudioControlling {
 
 extension AVAudioPlayerNode {
   func play(layer: LayerModel) {
-    play(fileUrl: layer.audioFileUrl)
+    play(file: layer.audioFile)
   }
 
-  func play(fileUrl: URL) {
-    guard let audioFile = try? AVAudioFile(forReading: fileUrl)
-    else {
+  func play(file: AVAudioFile?) {
+    guard let audioFile = file else {
       Logger.log("Audio file not found")
       return
     }
 
-    play(file: audioFile)
-  }
-
-  func play(file: AVAudioFile) {
-    scheduleFile(file, at: AVAudioTime(hostTime: .zero)) { [weak self] in
-      self?.play(file: file)
+    scheduleFile(audioFile, at: AVAudioTime(hostTime: .zero)) { [weak self] in
+      self?.play(file: audioFile)
     }
     play()
   }

@@ -1,5 +1,6 @@
 // Created with love by Igor Klyuzhev in 2023
 
+import AVFoundation
 import Foundation
 
 enum SampleType {
@@ -14,6 +15,14 @@ final class LayerModel: Hashable {
   let audioFileUrl: URL
   let sampleType: SampleType
   var isMuted: Bool
+
+  lazy var audioFile = try? AVAudioFile(forReading: audioFileUrl)
+  lazy var duration: Double = {
+    guard let audioFile else { return .zero }
+    let length = Double(audioFile.length)
+    let sampleRate = audioFile.processingFormat.sampleRate
+    return length / sampleRate
+  }()
 
   init(
     id: UUID = .init(),

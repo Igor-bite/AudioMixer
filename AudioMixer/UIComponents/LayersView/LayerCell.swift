@@ -34,9 +34,19 @@ final class LayerCell: UICollectionViewCell {
     return view
   }()
 
+  private lazy var progressView = {
+    let view = UIView()
+    view.backgroundColor = .clear // UIColor(red: 0.66, green: 0.858, blue: 0.064, alpha: 1)
+    view.clipsToBounds = true
+    return view
+  }()
+
+  private var progressWidthConstraint: ConstraintMakerEditable?
+
   private var layerModel: LayerModel?
   private var deleteAction: Action?
   private var audioController: AudioControlling?
+  private var displayLink: CADisplayLink?
 
   override init(frame: CGRect) {
     super.init(frame: frame)
@@ -97,13 +107,32 @@ final class LayerCell: UICollectionViewCell {
     let isPlaying = audioController.isLayerPlaying(layerModel)
     let playPauseImage = isPlaying ? Asset.pause.image : Asset.play.image
     playPauseButton.setImage(playPauseImage, for: .normal)
+    updatePlayingProgress()
+  }
+
+  private func updatePlayingProgress() {
+    guard let layerModel,
+          let audioController,
+          audioController.isLayerPlaying(layerModel)
+    else { return }
+
+//    progressWidthConstraint?.offset(-frame.width)
+//    UIView.animate(withDuration: 5.0) { [weak self] in
+//      self?.progressView.transform = CGAffineTransform(scaleX: 1, y: .zero)
+//      self?.progressView.backgroundColor = .red
+//    }
   }
 
   private func setupUI() {
     backgroundColor = .white
     smoothCornerRadius = .inset4
 
-    addSubviews(titleLabel, playPauseButton, muteButton, deleteButton)
+    addSubviews(progressView, titleLabel, playPauseButton, muteButton, deleteButton)
+
+    progressView.snp.makeConstraints { make in
+      make.left.top.bottom.equalToSuperview()
+      progressWidthConstraint = make.right.equalTo(playPauseButton.snp.left)
+    }
 
     titleLabel.snp.makeConstraints { make in
       make.top.bottom.equalToSuperview()

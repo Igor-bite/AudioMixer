@@ -105,6 +105,7 @@ final class MusicEditorViewController: UIViewController {
 
   private func guitarTapped() {
     guard let layer = layerModel(from: .zero) else { return }
+    audioMixer.play(layer)
     layersView.addLayer(layer)
   }
 
