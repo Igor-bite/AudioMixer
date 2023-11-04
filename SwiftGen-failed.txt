@@ -1,2 +1,1 @@
-error_message=Executing configuration file /Users/kluzhev-igor/Documents/YandexCup_2023/AudioMixer/SwiftGen/swiftgen.yml
-File written: ../AudioMixer/Resources/Generated/Assets.swift
+SwiftGenFailed=0

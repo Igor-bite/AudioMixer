@@ -7,6 +7,7 @@ final class MusicEditorViewController: UIViewController {
   override var preferredStatusBarStyle: UIStatusBarStyle { .lightContent }
 
   private let audioMixer = AudioMixer()
+  private let audioRecorder = MicrophoneAudioRecorder()
   private var previewLayerPlaying: LayerModel?
 
   private lazy var guitarSelector = SelectorButton(model: SelectorButton.Model(
@@ -73,6 +74,70 @@ final class MusicEditorViewController: UIViewController {
   private lazy var layersView = LayersView(audioController: audioMixer)
   private var layersHeightConstraint: ConstraintMakerEditable?
 
+  private lazy var recordMicrophoneButton = {
+    let view = UIButton()
+    view.smoothCornerRadius = .inset4
+    view.backgroundColor = .white
+    view.setImage(Asset.microphone.image, for: .normal)
+    view.addTarget(self, action: #selector(micRecordTapped), for: .touchUpInside)
+    return view
+  }()
+
+  private lazy var recordSampleButton = {
+    let view = UIButton()
+    view.smoothCornerRadius = .inset4
+    view.backgroundColor = .white
+    view.setImage(Asset.recordCircle.image, for: .normal)
+    view.addTarget(self, action: #selector(recordSampleTapped), for: .touchUpInside)
+    return view
+  }()
+
+  private lazy var playPauseButton = {
+    let view = UIButton()
+    view.smoothCornerRadius = .inset4
+    view.backgroundColor = .white
+    view.setImage(Asset.play.image, for: .normal)
+    view.addTarget(self, action: #selector(playPauseTapped), for: .touchUpInside)
+    return view
+  }()
+
+  private lazy var chevronImageView = {
+    let view = UIImageView()
+    view.contentMode = .scaleAspectFit
+    view.image = Asset.chevronUp.image
+    return view
+  }()
+
+  private lazy var layersLabel = {
+    let label = UILabel()
+    label.text = "Слои"
+    label.textColor = .black
+    return label
+  }()
+
+  private lazy var layersButton = {
+    let view = UIControl()
+    view.smoothCornerRadius = .inset4
+    view.backgroundColor = .white
+    view.addTarget(self, action: #selector(layersButtonTapped), for: .touchUpInside)
+
+    view.addSubviews(chevronImageView, layersLabel)
+
+    chevronImageView.snp.makeConstraints { make in
+      make.right.equalToSuperview().offset(-10)
+      make.centerY.equalToSuperview()
+      make.size.equalTo(CGSize(width: 12, height: 12))
+    }
+
+    layersLabel.snp.makeConstraints { make in
+      make.left.top.equalToSuperview().offset(10)
+      make.bottom.equalToSuperview().offset(-10)
+      make.right.equalTo(chevronImageView).offset(-16)
+    }
+
+    return view
+  }()
+
   override func viewDidLoad() {
     super.viewDidLoad()
 
@@ -82,7 +147,7 @@ final class MusicEditorViewController: UIViewController {
   private func setupUI() {
     let stack = UIStackView()
     stack.distribution = .equalSpacing
-    view.addSubviews(stack, layersView)
+    view.addSubviews(stack, layersView, recordMicrophoneButton, recordSampleButton, playPauseButton, layersButton)
     stack.snp.makeConstraints { make in
       make.top.equalTo(view.safeAreaLayoutGuide)
       make.leading.equalToSuperview().offset(16)
@@ -91,8 +156,33 @@ final class MusicEditorViewController: UIViewController {
     stack.addArrangedSubviews(guitarSelector, drumsSelector, trumpetSelector)
 
     layersView.snp.makeConstraints { make in
-      make.leading.trailing.bottom.equalToSuperview()
+      make.bottom.equalToSuperview().offset(-100)
+      make.leading.trailing.equalToSuperview()
       layersHeightConstraint = make.height.equalTo(0)
+    }
+
+    playPauseButton.snp.makeConstraints { make in
+      make.right.bottom.equalTo(view.safeAreaLayoutGuide).offset(-16)
+      make.size.equalTo(CGSize(width: 36, height: 36))
+    }
+
+    recordSampleButton.snp.makeConstraints { make in
+      make.right.equalTo(playPauseButton.snp.left).offset(-8)
+      make.bottom.equalTo(view.safeAreaLayoutGuide).offset(-16)
+      make.size.equalTo(CGSize(width: 36, height: 36))
+    }
+
+    recordMicrophoneButton.snp.makeConstraints { make in
+      make.right.equalTo(recordSampleButton.snp.left).offset(-8)
+      make.bottom.equalTo(view.safeAreaLayoutGuide).offset(-16)
+      make.size.equalTo(CGSize(width: 36, height: 36))
+    }
+
+    layersButton.snp.makeConstraints { make in
+      make.height.equalTo(36)
+      make.width.equalTo(84)
+      make.left.equalToSuperview().offset(16)
+      make.bottom.equalTo(view.safeAreaLayoutGuide).offset(-16)
     }
 
     layersView.heightDidChange = { [weak self] height in
@@ -139,5 +229,54 @@ final class MusicEditorViewController: UIViewController {
       audioFileUrl: audioFileUrl,
       isMuted: false
     )
+  }
+
+  @objc
+  private func micRecordTapped() {
+    if audioRecorder.isRecording {
+      recordMicrophoneButton.backgroundColor = .white
+      guard let layer = audioRecorder.stopRecording() else { return }
+      layersView.addLayer(layer)
+      audioMixer.play(layer)
+    } else {
+      recordMicrophoneButton.backgroundColor = .red.withAlphaComponent(0.8)
+      audioRecorder.record()
+    }
+  }
+
+  var shouldRecord = false
+
+  @objc
+  private func recordSampleTapped() {
+    shouldRecord.toggle()
+    recordSampleButton.backgroundColor = shouldRecord ? .red : .white
+
+    audioMixer.renderToFile(isStart: shouldRecord) { fileUrl in
+      DispatchQueue.main.async { [weak self] in
+        let activityViewController = UIActivityViewController(activityItems: [fileUrl], applicationActivities: nil)
+        activityViewController.completionWithItemsHandler = { _, _, _, _ in
+          print("end")
+        }
+        self?.present(activityViewController, animated: true, completion: nil)
+      }
+    }
+  }
+
+  @objc
+  private func playPauseTapped() {
+    if audioMixer.isRunning {
+      audioMixer.pause()
+    } else {
+      audioMixer.start()
+    }
+  }
+
+  @objc
+  private func layersButtonTapped() {
+    let newAlpha: CGFloat = layersView.alpha == 1 ? 0 : 1
+    UIView.animate(withDuration: 0.3) { [weak self] in
+      self?.layersView.alpha = newAlpha
+      self?.chevronImageView.transform = newAlpha == 1 ? CGAffineTransform(rotationAngle: CGFloat.pi) : .identity
+    }
   }
 }

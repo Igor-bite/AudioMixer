@@ -33,6 +33,7 @@
 		0A22C24B2AF59C7B00AC88D2 /* LayerModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A22C24A2AF59C7B00AC88D2 /* LayerModel.swift */; };
 		0A22C24D2AF5A24D00AC88D2 /* LayerCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A22C24C2AF5A24D00AC88D2 /* LayerCell.swift */; };
 		0A22C24F2AF5B21300AC88D2 /* AudioMixer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A22C24E2AF5B21300AC88D2 /* AudioMixer.swift */; };
+		0A22C2512AF6769B00AC88D2 /* MicrophoneAudioRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A22C2502AF6769B00AC88D2 /* MicrophoneAudioRecorder.swift */; };
 		0A35D8502AF42B5400E283B5 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A35D84F2AF42B5400E283B5 /* AppDelegate.swift */; };
 		0A35D8592AF42B5600E283B5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0A35D8582AF42B5600E283B5 /* Assets.xcassets */; };
 		0A35D85C2AF42B5600E283B5 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0A35D85A2AF42B5600E283B5 /* LaunchScreen.storyboard */; };
@@ -65,6 +66,7 @@
 		0A22C24A2AF59C7B00AC88D2 /* LayerModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LayerModel.swift; sourceTree = "<group>"; };
 		0A22C24C2AF5A24D00AC88D2 /* LayerCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LayerCell.swift; sourceTree = "<group>"; };
 		0A22C24E2AF5B21300AC88D2 /* AudioMixer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioMixer.swift; sourceTree = "<group>"; };
+		0A22C2502AF6769B00AC88D2 /* MicrophoneAudioRecorder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MicrophoneAudioRecorder.swift; sourceTree = "<group>"; };
 		0A35D84C2AF42B5400E283B5 /* AudioMixer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AudioMixer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0A35D84F2AF42B5400E283B5 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		0A35D8582AF42B5600E283B5 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -93,6 +95,7 @@
 				0A22C21F2AF4598500AC88D2 /* WaveformImageDrawer.swift */,
 				0A22C21D2AF454AE00AC88D2 /* WaveformAnalyzer.swift */,
 				0A22C2152AF446D500AC88D2 /* Logger.swift */,
+				0A22C2502AF6769B00AC88D2 /* MicrophoneAudioRecorder.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -382,6 +385,7 @@
 				0A22C2162AF446D500AC88D2 /* Logger.swift in Sources */,
 				0A35D8502AF42B5400E283B5 /* AppDelegate.swift in Sources */,
 				0A22C23E2AF5956300AC88D2 /* ArrayExtensions.swift in Sources */,
+				0A22C2512AF6769B00AC88D2 /* MicrophoneAudioRecorder.swift in Sources */,
 				0A22C2202AF4598500AC88D2 /* WaveformImageDrawer.swift in Sources */,
 				0A22C2492AF59BD700AC88D2 /* LayersView.swift in Sources */,
 				0A22C22D2AF549C500AC88D2 /* SelectorButton.swift in Sources */,
@@ -538,6 +542,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = AudioMixer/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.music";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Приложению необходимо разрешение для записи аудио с микрофона";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIStatusBarStyle = UIStatusBarStyleDarkContent;
@@ -571,6 +576,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = AudioMixer/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.music";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Приложению необходимо разрешение для записи аудио с микрофона";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIStatusBarStyle = UIStatusBarStyleDarkContent;

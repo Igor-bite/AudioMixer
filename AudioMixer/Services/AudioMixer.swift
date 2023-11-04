@@ -31,13 +31,26 @@ extension AudioControlling {
 
 final class AudioMixer: AudioControlling {
   private let audioEngine = AVAudioEngine()
+  private let audioSession = AVAudioSession.sharedInstance()
   private var mixerNodeInputBus = AVAudioNodeBus.min
   private var playerNodes = [LayerModel: AVAudioPlayerNode]()
   private var mixerNodeInputBusCache = [LayerModel: AVAudioNodeBus]()
 
+  var isRunning: Bool {
+    audioEngine.isRunning
+  }
+
   init() {
     setupAudioSession()
     setupAudioEngine()
+    installTap()
+
+    NotificationCenter.default.addObserver(
+      self,
+      selector: #selector(handleConfigurationChange),
+      name: NSNotification.Name.AVAudioEngineConfigurationChange,
+      object: nil
+    )
   }
 
   func play(_ layer: LayerModel) {
@@ -80,6 +93,69 @@ final class AudioMixer: AudioControlling {
     return 0.8
   }
 
+  func pause() {
+    audioEngine.pause()
+  }
+
+  func start() {
+    try? audioEngine.start()
+  }
+
+  var outputFile: AVAudioFile?
+  let writingQueue = DispatchQueue(label: "sample_recording.queue")
+
+  func installTap() {
+    let maxFrameCount: AVAudioFrameCount = 4096
+    audioEngine.mainMixerNode.installTap(
+      onBus: .zero,
+      bufferSize: maxFrameCount,
+      format: audioEngine.mainMixerNode.outputFormat(forBus: .zero)
+    ) { buffer, time in
+      self.writingQueue.async { [weak self] in
+        guard let outputFile = self?.outputFile else { return }
+        print(time)
+        print(buffer.frameCapacity)
+        do {
+          try outputFile.write(from: buffer)
+        } catch {
+          Logger.log(error)
+        }
+      }
+    }
+  }
+
+  func renderToFile(isStart: Bool, shareAction: @escaping (URL) -> Void) {
+    if isStart {
+      writingQueue.async { [weak self] in
+        guard let self else { return }
+
+        let date = Date().description.replacingOccurrences(of: " ", with: "_").replacingOccurrences(of: ":", with: "-")
+        let fileUrl = FileManager.getDocumentsDirectory().appendingPathComponent("RECORDING_\(date).caf")
+        let outputFile: AVAudioFile
+        do {
+          outputFile = try AVAudioFile(
+            forWriting: fileUrl,
+            settings: audioEngine.mainMixerNode.outputFormat(forBus: .zero).settings
+          )
+        } catch {
+          Logger.log(error)
+          return
+        }
+
+        self.outputFile = outputFile
+      }
+    } else {
+      pause()
+      writingQueue.async { [weak self] in
+        guard let self,
+              let file = outputFile
+        else { return }
+        shareAction(file.url)
+        outputFile = nil
+      }
+    }
+  }
+
   private func getPlayerNode(for layer: LayerModel) -> AVAudioPlayerNode {
     if let node = playerNodes[layer] {
       return node
@@ -120,24 +196,39 @@ final class AudioMixer: AudioControlling {
 
   private func setupAudioSession() {
     do {
-      try AVAudioSession.sharedInstance().setCategory(.playAndRecord)
-      try AVAudioSession.sharedInstance().setActive(true)
+      try audioSession.setCategory(.playAndRecord)
+      try audioSession.setActive(true)
+    } catch {
+      Logger.log(error)
+    }
+  }
+
+  private func changeOutputToSpeaker() {
+    do {
+      try audioSession.overrideOutputAudioPort(.speaker)
     } catch {
       Logger.log(error)
     }
   }
 
   private func setupAudioEngine() {
-    audioEngine.connect(audioEngine.mainMixerNode, to: audioEngine.outputNode, format: nil)
+    changeOutputToSpeaker()
+
+    audioEngine.connect(audioEngine.mainMixerNode, to: audioEngine.outputNode, fromBus: .zero, toBus: .zero, format: nil)
     audioEngine.prepare()
 
-    if !audioEngine.isRunning {
+    if !isRunning {
       do {
         try audioEngine.start()
       } catch {
         Logger.log(error)
       }
     }
+  }
+
+  @objc
+  private func handleConfigurationChange(notification: Notification) {
+    setupAudioEngine()
   }
 }
 
