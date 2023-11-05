@@ -26,6 +26,7 @@ internal enum Asset {
   internal static let cross = ImageAsset(name: "cross")
   internal static let drums = ImageAsset(name: "drums")
   internal static let guitar = ImageAsset(name: "guitar")
+  internal static let launchScreenImage = ImageAsset(name: "launch_screen_image")
   internal static let microphone = ImageAsset(name: "microphone")
   internal static let pause = ImageAsset(name: "pause")
   internal static let play = ImageAsset(name: "play")
