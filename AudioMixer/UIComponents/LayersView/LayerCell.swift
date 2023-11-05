@@ -69,7 +69,7 @@ final class LayerCell: UICollectionViewCell {
     updateMuteState()
     updatePlayingState()
 
-    progressView.transform = CGAffineTransform(translationX: -progressMaxWidth, y: .zero)
+    progressView.transform = CGAffineTransform(translationX: -progressView.bounds.width, y: .zero)
   }
 
   @objc
@@ -112,9 +112,6 @@ final class LayerCell: UICollectionViewCell {
   }
 
   private lazy var displayLink = createDisplayLink()
-  private var progressMaxWidth: CGFloat {
-    frame.width - 100
-  }
 
   @objc
   private func updatePlayingProgress() {
@@ -128,7 +125,8 @@ final class LayerCell: UICollectionViewCell {
 
     UIView.animate(withDuration: progress == 0 ? 0 : 0.1) { [weak self] in
       guard let self else { return }
-      progressView.transform = CGAffineTransform(translationX: -progressMaxWidth * (1 - progress), y: .zero)
+      let offset = -progressView.bounds.width * (1 - progress)
+      progressView.transform = CGAffineTransform(translationX: offset, y: .zero)
     }
   }
 
@@ -147,7 +145,7 @@ final class LayerCell: UICollectionViewCell {
 
     progressView.snp.makeConstraints { make in
       make.left.top.bottom.equalToSuperview()
-      progressWidthConstraint = make.width.equalToSuperview().offset(-100)
+      make.right.equalTo(playPauseButton.snp.left).offset(-10)
     }
 
     titleLabel.snp.makeConstraints { make in

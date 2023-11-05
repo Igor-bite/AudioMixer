@@ -6,8 +6,8 @@ import UIKit
 final class MusicEditorViewController: UIViewController {
   override var preferredStatusBarStyle: UIStatusBarStyle { .lightContent }
 
-  private let audioMixer = AudioMixer()
-  private let audioRecorder = MicrophoneAudioRecorder()
+  private lazy var audioMixer = AudioMixer()
+  private lazy var audioRecorder = MicrophoneAudioRecorder(format: audioMixer.format)
   private var previewLayerPlaying: LayerModel?
 
   private var shouldRecord = false
@@ -167,6 +167,7 @@ final class MusicEditorViewController: UIViewController {
     let view = UIImageView()
     view.contentMode = .scaleAspectFit
     view.image = Asset.chevronUp.image
+    view.transform = CGAffineTransform(rotationAngle: CGFloat.pi)
     return view
   }()
 
@@ -200,6 +201,12 @@ final class MusicEditorViewController: UIViewController {
     return view
   }()
 
+  private lazy var settingsControlAreaView = {
+    let gradientColor = UIColor(red: 0.353, green: 0.314, blue: 0.886, alpha: 1)
+    let view = GradientView(colors: [gradientColor.withAlphaComponent(0), gradientColor])
+    return view
+  }()
+
   override func viewDidLoad() {
     super.viewDidLoad()
 
@@ -211,13 +218,29 @@ final class MusicEditorViewController: UIViewController {
   private func setupUI() {
     let stack = UIStackView()
     stack.distribution = .equalSpacing
-    view.addSubviews(stack, layersView, recordMicrophoneButton, recordSampleButton, playPauseButton, layersButton)
+    view.addSubviews(
+      settingsControlAreaView,
+      stack,
+      layersView,
+      recordMicrophoneButton,
+      recordSampleButton,
+      playPauseButton,
+      layersButton
+    )
+
     stack.snp.makeConstraints { make in
       make.top.equalTo(view.safeAreaLayoutGuide)
       make.leading.equalToSuperview().offset(16)
       make.trailing.equalToSuperview().inset(16)
     }
     stack.addArrangedSubviews(guitarSelector, drumsSelector, trumpetSelector)
+
+    settingsControlAreaView.snp.makeConstraints { make in
+      make.leading.equalToSuperview().offset(16)
+      make.trailing.equalToSuperview().offset(-16)
+      make.top.equalTo(stack.snp.bottom).offset(36)
+      make.bottom.equalTo(layersView.snp.bottom)
+    }
 
     layersView.snp.makeConstraints { make in
       make.bottom.equalToSuperview().offset(-100)
@@ -308,7 +331,7 @@ final class MusicEditorViewController: UIViewController {
       layersView.addLayer(layer)
       audioMixer.play(layer)
     } else {
-      recordMicrophoneButton.backgroundColor = .red.withAlphaComponent(0.8)
+      recordMicrophoneButton.backgroundColor = .red
       audioRecorder.record()
     }
   }
@@ -345,9 +368,11 @@ final class MusicEditorViewController: UIViewController {
   @objc
   private func layersButtonTapped() {
     let newAlpha: CGFloat = layersView.alpha == 1 ? 0 : 1
+    let isHidden = newAlpha == 0
     UIView.animate(withDuration: 0.3) { [weak self] in
       self?.layersView.alpha = newAlpha
-      self?.chevronImageView.transform = newAlpha == 1 ? CGAffineTransform(rotationAngle: CGFloat.pi) : .identity
+      self?.chevronImageView.transform = isHidden ? CGAffineTransform(rotationAngle: CGFloat.pi) : .identity
+      self?.layersButton.backgroundColor = isHidden ? .white : UIColor(red: 0.66, green: 0.858, blue: 0.064, alpha: 1)
     }
   }
 }

@@ -43,6 +43,7 @@
 		0A22C2602AF6999100AC88D2 /* trumpet_2.wav in Resources */ = {isa = PBXBuildFile; fileRef = 0A22C2582AF6999100AC88D2 /* trumpet_2.wav */; };
 		0A22C2612AF6999100AC88D2 /* trumpet_4.wav in Resources */ = {isa = PBXBuildFile; fileRef = 0A22C2592AF6999100AC88D2 /* trumpet_4.wav */; };
 		0A22C2642AF6E8BB00AC88D2 /* AVAudioPCMBuffer+Processing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A22C2632AF6E8BA00AC88D2 /* AVAudioPCMBuffer+Processing.swift */; };
+		0A22C2662AF6FAF500AC88D2 /* GradientView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A22C2652AF6FAF500AC88D2 /* GradientView.swift */; };
 		0A35D8502AF42B5400E283B5 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A35D84F2AF42B5400E283B5 /* AppDelegate.swift */; };
 		0A35D8592AF42B5600E283B5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0A35D8582AF42B5600E283B5 /* Assets.xcassets */; };
 		0A35D85C2AF42B5600E283B5 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0A35D85A2AF42B5600E283B5 /* LaunchScreen.storyboard */; };
@@ -85,6 +86,7 @@
 		0A22C2582AF6999100AC88D2 /* trumpet_2.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = trumpet_2.wav; sourceTree = "<group>"; };
 		0A22C2592AF6999100AC88D2 /* trumpet_4.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = trumpet_4.wav; sourceTree = "<group>"; };
 		0A22C2632AF6E8BA00AC88D2 /* AVAudioPCMBuffer+Processing.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "AVAudioPCMBuffer+Processing.swift"; sourceTree = "<group>"; };
+		0A22C2652AF6FAF500AC88D2 /* GradientView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GradientView.swift; sourceTree = "<group>"; };
 		0A35D84C2AF42B5400E283B5 /* AudioMixer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AudioMixer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0A35D84F2AF42B5400E283B5 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		0A35D8582AF42B5600E283B5 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -121,6 +123,7 @@
 		0A22C1FC2AF4418500AC88D2 /* UIComponents */ = {
 			isa = PBXGroup;
 			children = (
+				0A22C2652AF6FAF500AC88D2 /* GradientView.swift */,
 				0A22C2472AF59BCA00AC88D2 /* LayersView */,
 				0A22C2212AF45D4200AC88D2 /* WaveformStub */,
 				0A22C2362AF554FC00AC88D2 /* SelectorButton */,
@@ -442,6 +445,7 @@
 				0A22C2382AF5551100AC88D2 /* SelectorButtonItem.swift in Sources */,
 				0A22C21E2AF454AE00AC88D2 /* WaveformAnalyzer.swift in Sources */,
 				0A22C2352AF550EA00AC88D2 /* Insets.swift in Sources */,
+				0A22C2662AF6FAF500AC88D2 /* GradientView.swift in Sources */,
 				0A22C2292AF45D4200AC88D2 /* ChangeBarColorAnimation.swift in Sources */,
 				0A22C2272AF45D4200AC88D2 /* BarsCycleView.swift in Sources */,
 			);

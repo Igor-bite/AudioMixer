@@ -5,20 +5,23 @@ import Foundation
 
 final class MicrophoneAudioRecorder {
   private let recordingSession = AVAudioSession.sharedInstance()
-  private var whistleRecorder: AVAudioRecorder?
+  private var voiceRecorder: AVAudioRecorder?
   private var recordingLayer: LayerModel?
 
   private var recordingsCounter = 1
 
   var isRecording: Bool {
-    whistleRecorder != nil && whistleRecorder?.isRecording == true
+    voiceRecorder != nil && voiceRecorder?.isRecording == true
   }
 
-  init() {
+  private let format: AVAudioFormat
+
+  init(format: AVAudioFormat) {
+    self.format = format
     do {
       try recordingSession.setCategory(.playAndRecord, mode: .default)
       try recordingSession.setActive(true)
-      recordingSession.requestRecordPermission { [weak self] allowed in
+      recordingSession.requestRecordPermission { allowed in
         DispatchQueue.main.async {
           if !allowed {
             Logger.log("Not allowed to use mic")
@@ -33,18 +36,10 @@ final class MicrophoneAudioRecorder {
   func record() {
     let layer = makeVoiceMemoLayer()
     recordingLayer = layer
-    print(layer.audioFileUrl.absoluteString)
-
-    let settings = [
-      AVFormatIDKey: Int(kAudioFormatMPEG4AAC),
-      AVNumberOfChannelsKey: 1,
-      AVSampleRateKey: 4410,
-      AVEncoderAudioQualityKey: AVAudioQuality.high.rawValue,
-    ]
 
     do {
-      whistleRecorder = try AVAudioRecorder(url: layer.audioFileUrl, settings: settings)
-      whistleRecorder?.record()
+      voiceRecorder = try AVAudioRecorder(url: layer.audioFileUrl, format: format)
+      voiceRecorder?.record()
     } catch {
       stopRecording()
       handleError(e: error)
@@ -57,8 +52,8 @@ final class MicrophoneAudioRecorder {
 
   @discardableResult
   func stopRecording() -> LayerModel? {
-    whistleRecorder?.stop()
-    whistleRecorder = nil
+    voiceRecorder?.stop()
+    voiceRecorder = nil
     guard let layer = recordingLayer else {
       assertionFailure("No layer model by the end of recording")
       return nil

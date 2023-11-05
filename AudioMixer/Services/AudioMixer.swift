@@ -43,6 +43,10 @@ final class AudioMixer: AudioControlling {
     audioEngine.isRunning
   }
 
+  var format: AVAudioFormat {
+    audioEngine.outputNode.outputFormat(forBus: .zero)
+  }
+
   init() {
     setupAudioSession()
     setupAudioEngine()
@@ -125,16 +129,14 @@ final class AudioMixer: AudioControlling {
   let writingQueue = DispatchQueue(label: "sample_recording.queue")
 
   func installTap() {
-    let maxFrameCount: AVAudioFrameCount = 4410
+    let maxFrameCount: AVAudioFrameCount = 48000
     layersMixerNode.installTap(
       onBus: .zero,
       bufferSize: maxFrameCount,
-      format: layersMixerNode.outputFormat(forBus: .zero)
-    ) { buffer, time in
+      format: format
+    ) { buffer, _ in
       self.writingQueue.async { [weak self] in
         guard let outputFile = self?.outputFile else { return }
-        print(time)
-        print(buffer.frameCapacity)
         do {
           try outputFile.write(from: buffer)
         } catch {
