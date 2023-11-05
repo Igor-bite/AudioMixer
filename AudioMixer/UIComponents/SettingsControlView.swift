@@ -27,6 +27,18 @@ final class SettingsControlView: UIView {
     longStickIndex: Constants.longStickIndex
   )
 
+  private lazy var vSeparator = {
+    let view = UIView()
+    view.backgroundColor = .gray
+    return view
+  }()
+
+  private lazy var hSeparator = {
+    let view = UIView()
+    view.backgroundColor = .gray
+    return view
+  }()
+
   private lazy var vButton = makeButton(
     with: "громкость",
     rotation: Constants.verticalButtonRotation
@@ -66,7 +78,7 @@ final class SettingsControlView: UIView {
   }
 
   private func setupUI() {
-    addSubviews(gradient, hRuler, vRuler, hButton, vButton)
+    addSubviews(gradient, hRuler, vRuler, hButton, vButton, hSeparator, vSeparator)
 
     gradient.snp.makeConstraints { make in
       make.edges.equalToSuperview()
@@ -95,6 +107,20 @@ final class SettingsControlView: UIView {
       make.height.equalTo(Constants.controlButtonHeight)
       make.centerX.equalTo(snp.left).offset(Constants.controlButtonHeight / 2)
       make.centerY.equalToSuperview()
+    }
+
+    hSeparator.snp.makeConstraints { make in
+      make.height.equalTo(UIScreen.onePixel)
+      make.left.equalToSuperview().offset(32)
+      make.right.equalToSuperview().offset(-32)
+      make.centerY.equalToSuperview()
+    }
+
+    vSeparator.snp.makeConstraints { make in
+      make.width.equalTo(UIScreen.onePixel)
+      make.top.equalToSuperview().offset(32)
+      make.bottom.equalToSuperview().offset(-32)
+      make.centerX.equalToSuperview()
     }
   }
 

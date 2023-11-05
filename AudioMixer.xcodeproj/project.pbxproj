@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0A0DF4D82AF7E5E100BEFA70 /* UIScreenExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A0DF4D72AF7E5E100BEFA70 /* UIScreenExtensions.swift */; };
 		0A22C20F2AF443C100AC88D2 /* ScreenAssembly.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A22C20E2AF443C100AC88D2 /* ScreenAssembly.swift */; };
 		0A22C2162AF446D500AC88D2 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A22C2152AF446D500AC88D2 /* Logger.swift */; };
 		0A22C2182AF4495A00AC88D2 /* guitar_2.wav in Resources */ = {isa = PBXBuildFile; fileRef = 0A22C2172AF4495A00AC88D2 /* guitar_2.wav */; };
@@ -57,6 +58,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		0A0DF4D72AF7E5E100BEFA70 /* UIScreenExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIScreenExtensions.swift; sourceTree = "<group>"; };
 		0A22C20E2AF443C100AC88D2 /* ScreenAssembly.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenAssembly.swift; sourceTree = "<group>"; };
 		0A22C2152AF446D500AC88D2 /* Logger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
 		0A22C2172AF4495A00AC88D2 /* guitar_2.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = guitar_2.wav; sourceTree = "<group>"; };
@@ -218,6 +220,7 @@
 				0A22C2392AF55A7600AC88D2 /* Action.swift */,
 				0A22C26C2AF79F9500AC88D2 /* CGFloat+Normalization.swift */,
 				0A22C2702AF7B53200AC88D2 /* clamp.swift */,
+				0A0DF4D72AF7E5E100BEFA70 /* UIScreenExtensions.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -442,6 +445,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				0A22C23A2AF55A7600AC88D2 /* Action.swift in Sources */,
+				0A0DF4D82AF7E5E100BEFA70 /* UIScreenExtensions.swift in Sources */,
 				0A22C24F2AF5B21300AC88D2 /* AudioMixer.swift in Sources */,
 				0A22C2332AF54C8400AC88D2 /* UIViewExtensions.swift in Sources */,
 				0A22C24B2AF59C7B00AC88D2 /* LayerModel.swift in Sources */,

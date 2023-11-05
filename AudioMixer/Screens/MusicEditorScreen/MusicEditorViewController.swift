@@ -217,7 +217,7 @@ final class MusicEditorViewController: UIViewController {
   private lazy var settingsControlAreaView = {
     let view = SettingsControlView(audioController: audioMixer)
     view.layer.borderColor = UIColor.gray.cgColor
-    view.layer.borderWidth = 1 / UIScreen.main.scale
+    view.layer.borderWidth = UIScreen.onePixel
     return view
   }()
 
