@@ -38,6 +38,8 @@ final class LayerModel: Hashable {
     return length / sampleRate
   }()
 
+  lazy var waveformWidth: Double = duration * 60 * 2
+
   init(
     id: UUID = .init(),
     name: String,
