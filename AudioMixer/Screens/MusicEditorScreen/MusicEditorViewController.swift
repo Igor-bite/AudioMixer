@@ -499,11 +499,14 @@ final class MusicEditorViewController: UIViewController {
     shouldRecord.toggle()
     recordSampleButton.backgroundColor = shouldRecord ? .red : .white
     audioMixer.playAll()
-    audioMixer.renderToFile(isStart: shouldRecord) { fileUrl in
-      DispatchQueue.main.async { [weak self] in
-        let activityViewController = UIActivityViewController(activityItems: [fileUrl], applicationActivities: nil)
-        activityViewController.completionWithItemsHandler = { _, _, _, _ in }
-        self?.present(activityViewController, animated: true, completion: nil)
+    DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) { [weak self] in
+      guard let self else { return }
+      audioMixer.renderToFile(isStart: shouldRecord) { fileUrl in
+        DispatchQueue.main.async { [weak self] in
+          let activityViewController = UIActivityViewController(activityItems: [fileUrl], applicationActivities: nil)
+          activityViewController.completionWithItemsHandler = { _, _, _, _ in }
+          self?.present(activityViewController, animated: true, completion: nil)
+        }
       }
     }
   }
