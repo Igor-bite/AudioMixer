@@ -182,7 +182,7 @@ final class SettingsControlView: UIView {
       toValue = Constants.Volume.maxValue
     }
 
-    return CGFloat(
+    let value = CGFloat(
       verticalValue.normalize(
         min: fromValue,
         max: toValue,
@@ -190,6 +190,7 @@ final class SettingsControlView: UIView {
         to: maxValue
       )
     )
+    return height - value
   }
 
   private func touchX(for horizontalValue: CGFloat) -> CGFloat {
@@ -365,8 +366,8 @@ fileprivate enum Constants {
 
   enum Volume {
     static let minValue = 0.0
-    static let centerValue = 1.0
-    static let maxValue = 10.0
+    static let centerValue = 0.5
+    static let maxValue = 1.0
   }
 
   enum Rate {
