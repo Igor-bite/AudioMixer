@@ -53,6 +53,7 @@
 		0A35D8592AF42B5600E283B5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0A35D8582AF42B5600E283B5 /* Assets.xcassets */; };
 		0A35D85C2AF42B5600E283B5 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0A35D85A2AF42B5600E283B5 /* LaunchScreen.storyboard */; };
 		0A35D86B2AF43BD100E283B5 /* Assets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A35D86A2AF43BD100E283B5 /* Assets.swift */; };
+		0A6573AE2AF7CF2100B8D43F /* WeakHolder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A6573AD2AF7CF2100B8D43F /* WeakHolder.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -103,6 +104,7 @@
 		0A35D85B2AF42B5600E283B5 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		0A35D85D2AF42B5600E283B5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		0A35D86A2AF43BD100E283B5 /* Assets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Assets.swift; sourceTree = "<group>"; };
+		0A6573AD2AF7CF2100B8D43F /* WeakHolder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WeakHolder.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -207,6 +209,7 @@
 		0A22C2312AF54BDD00AC88D2 /* Utils */ = {
 			isa = PBXGroup;
 			children = (
+				0A6573AD2AF7CF2100B8D43F /* WeakHolder.swift */,
 				0A22C2632AF6E8BA00AC88D2 /* AVAudioPCMBuffer+Processing.swift */,
 				0A22C23B2AF5920300AC88D2 /* UIStackViewExtensions.swift */,
 				0A22C23D2AF5956300AC88D2 /* ArrayExtensions.swift */,
@@ -457,6 +460,7 @@
 				0A22C26D2AF79F9500AC88D2 /* CGFloat+Normalization.swift in Sources */,
 				0A22C22B2AF5496D00AC88D2 /* MusicEditorViewController.swift in Sources */,
 				0A22C23C2AF5920300AC88D2 /* UIStackViewExtensions.swift in Sources */,
+				0A6573AE2AF7CF2100B8D43F /* WeakHolder.swift in Sources */,
 				0A22C2692AF78E4900AC88D2 /* SettingsControlView.swift in Sources */,
 				0A22C26F2AF7ABBA00AC88D2 /* Colors.swift in Sources */,
 				0A22C20F2AF443C100AC88D2 /* ScreenAssembly.swift in Sources */,

@@ -15,6 +15,8 @@ protocol AudioControlling {
   func rate(for layer: LayerModel) -> Float
   func isLayerPlaying(_ layer: LayerModel) -> Bool
   func playedTime(_ layer: LayerModel) -> Double
+
+  func observeChanges(_ observer: AudioChangesObserver)
 }
 
 extension AudioControlling {
@@ -31,6 +33,10 @@ extension AudioControlling {
   }
 }
 
+protocol AudioChangesObserver: AnyObject {
+  func playingStateChanged()
+}
+
 final class AudioMixer: AudioControlling {
   private let audioEngine = AVAudioEngine()
   private let audioSession = AVAudioSession.sharedInstance()
@@ -38,9 +44,12 @@ final class AudioMixer: AudioControlling {
   private var playerNodes = [LayerModel: AVAudioPlayerNode]()
   private var pitchNodes = [LayerModel: AVAudioUnitTimePitch]()
   private var mixerNodeInputBusCache = [LayerModel: AVAudioNodeBus]()
-
+  private var audioChangesObservers = Set<WeakHolder>() // AudioChangesObserver
   private lazy var previewPlayerNode = makePreviewPlayerNode()
   private lazy var layersMixerNode = AVAudioMixerNode()
+
+  private var recordingOutputFile: AVAudioFile?
+  private let recordingWritingQueue = DispatchQueue(label: "sample_recording.queue")
 
   var isRunning: Bool {
     audioEngine.isRunning
@@ -64,9 +73,7 @@ final class AudioMixer: AudioControlling {
   }
 
   func play(_ layer: LayerModel) {
-    if !isRunning {
-      setupAudioEngine()
-    }
+    if !isRunning { setupAudioEngine() }
     let player = getPlayerNode(for: layer)
     player.play(layer: layer)
   }
@@ -140,26 +147,29 @@ final class AudioMixer: AudioControlling {
     for layer in playerNodes.keys {
       pause(layer)
     }
+    notifyAudioChangeObservers()
   }
 
   func playAll() {
     for layer in playerNodes.keys {
       play(layer)
     }
+    notifyAudioChangeObservers()
   }
 
-  var outputFile: AVAudioFile?
-  let writingQueue = DispatchQueue(label: "sample_recording.queue")
+  func observeChanges(_ observer: AudioChangesObserver) {
+    audioChangesObservers.insert(WeakHolder(observer))
+  }
 
-  func installTap() {
+  private func installTap() {
     let maxFrameCount: AVAudioFrameCount = 48000
     layersMixerNode.installTap(
       onBus: .zero,
       bufferSize: maxFrameCount,
       format: format
     ) { buffer, _ in
-      self.writingQueue.async { [weak self] in
-        guard let outputFile = self?.outputFile else { return }
+      self.recordingWritingQueue.async { [weak self] in
+        guard let outputFile = self?.recordingOutputFile else { return }
         do {
           try outputFile.write(from: buffer)
         } catch {
@@ -171,11 +181,12 @@ final class AudioMixer: AudioControlling {
 
   func renderToFile(isStart: Bool, shareAction: @escaping (URL) -> Void) {
     if isStart {
-      writingQueue.async { [weak self] in
+      recordingWritingQueue.async { [weak self] in
         guard let self else { return }
 
         let date = Date().description.replacingOccurrences(of: " ", with: "_").replacingOccurrences(of: ":", with: "-")
-        let fileUrl = FileManager.getDocumentsDirectory().appendingPathComponent("RECORDING_\(date).caf")
+        let fileName = "RECORDING_\(date).caf"
+        let fileUrl = FileManager.getDocumentsDirectory().appendingPathComponent(fileName)
         let outputFile: AVAudioFile
         do {
           outputFile = try AVAudioFile(
@@ -187,24 +198,21 @@ final class AudioMixer: AudioControlling {
           return
         }
 
-        self.outputFile = outputFile
+        self.recordingOutputFile = outputFile
       }
     } else {
       pauseAll()
-      writingQueue.async { [weak self] in
+      recordingWritingQueue.async { [weak self] in
         guard let self,
-              let file = outputFile
+              let file = recordingOutputFile
         else { return }
         shareAction(file.url)
-        outputFile = nil
+        recordingOutputFile = nil
       }
     }
   }
 
   func playPreview(for layer: LayerModel) {
-    if previewPlayerNode.isPlaying {
-      previewPlayerNode.stop()
-    }
     previewPlayerNode.play(layer: layer)
   }
 
@@ -304,12 +312,20 @@ final class AudioMixer: AudioControlling {
       } catch {
         Logger.log(error)
       }
+      notifyAudioChangeObservers()
     }
   }
 
   @objc
   private func handleConfigurationChange(notification: Notification) {
     setupAudioEngine()
+  }
+
+  private func notifyAudioChangeObservers() {
+    for observer in audioChangesObservers {
+      guard let observer = observer.object as? AudioChangesObserver else { continue }
+      observer.playingStateChanged()
+    }
   }
 }
 

@@ -66,11 +66,14 @@ final class LayerCell: UICollectionViewCell {
     self.layerModel = model
     self.audioController = audioController
     self.deleteAction = deleteAction
+    audioController.observeChanges(self)
     titleLabel.text = model.name
     updateMuteState()
     updatePlayingState()
-
-    progressView.transform = CGAffineTransform(translationX: -progressView.bounds.width, y: .zero)
+    progressView.transform = CGAffineTransform(
+      translationX: -progressView.bounds.width,
+      y: .zero
+    )
   }
 
   @objc
@@ -170,6 +173,15 @@ final class LayerCell: UICollectionViewCell {
       make.top.bottom.equalToSuperview()
       make.right.equalTo(muteButton.snp.left)
       make.width.equalTo(24)
+    }
+  }
+}
+
+extension LayerCell: AudioChangesObserver {
+  func playingStateChanged() {
+    DispatchQueue.main.async {
+      self.displayLink.isPaused = true
+      self.updatePlayingState()
     }
   }
 }
