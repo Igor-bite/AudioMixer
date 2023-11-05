@@ -37,6 +37,7 @@ final class LayerCell: UICollectionViewCell {
   private lazy var progressView = {
     let view = UIView()
     view.backgroundColor = .accentColor
+    view.isUserInteractionEnabled = false
     view.clipsToBounds = true
     return view
   }()
@@ -139,6 +140,7 @@ final class LayerCell: UICollectionViewCell {
 
   private func setupUI() {
     backgroundColor = .white
+    clipsToBounds = true
     smoothCornerRadius = .inset4
 
     addSubviews(progressView, titleLabel, playPauseButton, muteButton, deleteButton)

@@ -7,12 +7,7 @@ final class SettingsControlView: UIView {
   private var layerModel: LayerModel?
   private let audioController: AudioControlling
 
-  var touchLocation: CGPoint = .zero {
-    didSet {
-      updateSettings()
-      updateButtonsLocation()
-    }
-  }
+  var touchLocation: CGPoint = .zero
 
   private lazy var gradient = GradientView(colors: [
     Constants.gradientColor.withAlphaComponent(0),
@@ -135,6 +130,7 @@ final class SettingsControlView: UIView {
     let touchLocationX = touchX(for: CGFloat(rate))
 
     touchLocation = CGPoint(x: touchLocationX, y: touchLocaionY)
+    updateButtonsLocation(animated: true)
   }
 
   private func touchY(for verticalValue: CGFloat) -> CGFloat {
@@ -199,26 +195,37 @@ final class SettingsControlView: UIView {
     )
   }
 
-  private func updateButtonsLocation() {
+  private func updateButtonsLocation(animated: Bool = false) {
     let hButtonX = clamp(
       touchLocation.x - halfWidth,
       min: -halfWidth + Constants.controlButtonWidth / 2 + Constants.controlButtonHeight,
       max: halfWidth - Constants.controlButtonWidth / 2
     )
-    hButton.transform = CGAffineTransform(
-      translationX: hButtonX,
-      y: .zero
-    )
-
     let vButtonY = clamp(
       height - touchLocation.y - halfHeight,
       min: -halfHeight + Constants.controlButtonWidth / 2 + Constants.controlButtonHeight,
       max: halfHeight - Constants.controlButtonWidth / 2
     )
-    vButton.transform = CGAffineTransform(
-      translationX: .zero,
-      y: -vButtonY
-    ).rotated(by: Constants.verticalButtonRotation)
+
+    let applyTransform = { [weak self] in
+      self?.hButton.transform = CGAffineTransform(
+        translationX: hButtonX,
+        y: .zero
+      )
+
+      self?.vButton.transform = CGAffineTransform(
+        translationX: .zero,
+        y: -vButtonY
+      ).rotated(by: Constants.verticalButtonRotation)
+    }
+
+    if animated {
+      UIView.animate(withDuration: 0.2) {
+        applyTransform()
+      }
+    } else {
+      applyTransform()
+    }
   }
 
   private func updateSettings() {
@@ -294,6 +301,8 @@ final class SettingsControlView: UIView {
     let location = touches.first?.location(in: self) ?? .zero
     if point(inside: location, with: event) {
       touchLocation = location
+      updateSettings()
+      updateButtonsLocation()
     }
   }
 
@@ -301,6 +310,8 @@ final class SettingsControlView: UIView {
     let location = touches.first?.location(in: self) ?? .zero
     if point(inside: location, with: event) {
       touchLocation = location
+      updateSettings()
+      updateButtonsLocation()
     }
   }
 }

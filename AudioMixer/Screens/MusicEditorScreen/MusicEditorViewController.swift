@@ -129,7 +129,16 @@ final class MusicEditorViewController: UIViewController {
   ))
 
   private lazy var layersView = {
-    let view = LayersView(audioController: audioMixer)
+    let view = LayersView(audioController: audioMixer) { [weak self] layer in
+      self?.layersButtonTapped()
+      self?.settingsControlAreaView.configure(with: layer)
+    } heightDidChange: { [weak self] height in
+      self?.layersHeightConstraint?.constraint.update(offset: height)
+      UIView.animate(withDuration: 0.3) { [weak self] in
+        self?.view.layoutSubviews()
+      }
+    }
+
     view.alpha = .zero
     return view
   }()
@@ -272,13 +281,6 @@ final class MusicEditorViewController: UIViewController {
       make.width.equalTo(84)
       make.left.equalToSuperview().offset(16)
       make.bottom.equalTo(view.safeAreaLayoutGuide).offset(-16)
-    }
-
-    layersView.heightDidChange = { [weak self] height in
-      self?.layersHeightConstraint?.constraint.update(offset: height)
-      UIView.animate(withDuration: 0.3) { [weak self] in
-        self?.view.layoutSubviews()
-      }
     }
   }
 

@@ -13,10 +13,17 @@ final class LayersView: UIView {
     }
   }
 
-  var heightDidChange: ((_ height: CGFloat) -> Void)?
+  var heightDidChange: (_ height: CGFloat) -> Void
+  var didSelectLayer: (_ layer: LayerModel) -> Void
 
-  init(audioController: AudioControlling) {
+  init(
+    audioController: AudioControlling,
+    didSelectLayer: @escaping (_ layer: LayerModel) -> Void,
+    heightDidChange: @escaping (_ height: CGFloat) -> Void
+  ) {
     self.audioController = audioController
+    self.didSelectLayer = didSelectLayer
+    self.heightDidChange = heightDidChange
     super.init(frame: .zero)
     setupUI()
   }
@@ -44,7 +51,7 @@ final class LayersView: UIView {
   private func updateCollectionView() {
     let height = CGFloat(layers.count) * (Constants.cellHeight + Constants.interItemSpacing) + safeAreaInsets.bottom
     if height <= Constants.maxHeight {
-      heightDidChange?(height)
+      heightDidChange(height)
     }
 
     var snapshot = NSDiffableDataSourceSnapshot<Int, LayerModel>()
@@ -107,7 +114,11 @@ final class LayersView: UIView {
 
 extension LayersView: UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
   func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-    print("select")
+    guard let layer = layers[safe: indexPath.item] else {
+      Logger.log("Incorrect state of layers property")
+      return
+    }
+    didSelectLayer(layer)
   }
 
   func collectionView(
