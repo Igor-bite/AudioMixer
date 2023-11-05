@@ -63,15 +63,17 @@ final class MicrophoneAudioRecorder {
   }
 
   private func makeVoiceMemoLayer() -> LayerModel {
-    let name = "voice_\(recordingsCounter)"
+    let fileName = "voice_\(recordingsCounter)"
+    let sampleType = SampleType.voice
+    let layerName = "\(sampleType.layerPrefix) \(recordingsCounter)"
     let date = Date().description.replacingOccurrences(of: " ", with: "_").replacingOccurrences(of: ":", with: "-")
-    let fileUrl = FileManager.getDocumentsDirectory().appendingPathComponent("\(name)_\(date).m4a")
+    let fileUrl = FileManager.getDocumentsDirectory().appendingPathComponent("\(fileName)_\(date).m4a")
     recordingsCounter += 1
     return LayerModel(
-      name: name,
+      name: layerName,
       audioFileUrl: fileUrl,
       isMuted: false,
-      sampleType: .voice
+      sampleType: sampleType
     )
   }
 }

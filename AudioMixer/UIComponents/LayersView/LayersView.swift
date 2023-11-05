@@ -5,6 +5,9 @@ import UIKit
 
 final class LayersView: UIView {
   private let audioController: AudioControlling
+  private let heightDidChange: (_ height: CGFloat) -> Void
+  private let didSelectLayer: (_ layer: LayerModel) -> Void
+
   private lazy var collectionView = makeCollectionView()
   private var dataSource: UICollectionViewDiffableDataSource<Int, LayerModel>?
   private var layers = [LayerModel]() {
@@ -13,8 +16,9 @@ final class LayersView: UIView {
     }
   }
 
-  var heightDidChange: (_ height: CGFloat) -> Void
-  var didSelectLayer: (_ layer: LayerModel) -> Void
+  var isEmpty: Bool {
+    layers.isEmpty
+  }
 
   init(
     audioController: AudioControlling,

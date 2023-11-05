@@ -6,6 +6,7 @@ import UIKit
 final class SettingsControlView: UIView {
   private var layerModel: LayerModel?
   private let audioController: AudioControlling
+  private let feedbackGenerator = UISelectionFeedbackGenerator()
 
   var touchLocation: CGPoint = .zero
 
@@ -300,6 +301,7 @@ final class SettingsControlView: UIView {
   override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
     let location = touches.first?.location(in: self) ?? .zero
     if point(inside: location, with: event) {
+      feedbackGenerator.selectionChanged()
       touchLocation = location
       updateSettings()
       updateButtonsLocation()
@@ -312,6 +314,13 @@ final class SettingsControlView: UIView {
       touchLocation = location
       updateSettings()
       updateButtonsLocation()
+    }
+  }
+
+  override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+    let location = touches.first?.location(in: self) ?? .zero
+    if point(inside: location, with: event) {
+      feedbackGenerator.selectionChanged()
     }
   }
 }

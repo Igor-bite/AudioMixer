@@ -58,6 +58,7 @@ final class SelectorButton: UIView {
     return view
   }()
 
+  private let feedbackGenerator = UISelectionFeedbackGenerator()
   private var selectedItem: SelectorButtonItem?
   private let model: Model
   private var heightConstraint: ConstraintMakerEditable?
@@ -175,6 +176,7 @@ final class SelectorButton: UIView {
         selectedItem = view
         guard let itemIndex = view.itemIndex else { return }
         model.hoverAction(itemIndex)
+        feedbackGenerator.selectionChanged()
       } else {
         selectedItem?.shouldDeselect()
         selectedItem = nil

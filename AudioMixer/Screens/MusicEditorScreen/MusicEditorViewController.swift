@@ -6,6 +6,7 @@ import UIKit
 final class MusicEditorViewController: UIViewController {
   override var preferredStatusBarStyle: UIStatusBarStyle { .lightContent }
 
+  private lazy var feedbackGenerator = UISelectionFeedbackGenerator()
   private lazy var audioMixer = AudioMixer()
   private lazy var audioRecorder = MicrophoneAudioRecorder(format: audioMixer.format)
   private var previewLayerPlaying: LayerModel?
@@ -138,7 +139,6 @@ final class MusicEditorViewController: UIViewController {
         self?.view.layoutSubviews()
       }
     }
-
     view.alpha = .zero
     return view
   }()
@@ -285,9 +285,7 @@ final class MusicEditorViewController: UIViewController {
   }
 
   private func selectorTapped(type: SampleType) {
-    guard let layer = layerModel(from: .zero, type: type) else { return }
-    audioMixer.play(layer)
-    layersView.addLayer(layer)
+    sampleSelected(at: .zero, type: type)
   }
 
   private func playSample(index: Int, type: SampleType) {
@@ -309,19 +307,23 @@ final class MusicEditorViewController: UIViewController {
     }
     audioMixer.play(layer)
     settingsControlAreaView.configure(with: layer)
+    if layersView.isEmpty {
+      layersButtonTapped()
+    }
     layersView.addLayer(layer)
   }
 
   private func layerModel(from sampleIndex: Int, type: SampleType) -> LayerModel? {
-    let sample = "\(type.rawValue)_\(sampleIndex + 1)"
-    guard let audioFileUrl = Bundle.main.url(forResource: sample, withExtension: "wav")
+    let fileName = "\(type.rawValue)_\(sampleIndex + 1)"
+    let layerName = "\(type.layerPrefix) \(sampleIndex + 1)"
+    guard let audioFileUrl = Bundle.main.url(forResource: fileName, withExtension: "wav")
     else {
       Logger.log("Audio file was not found")
       return nil
     }
 
     return LayerModel(
-      name: sample,
+      name: layerName,
       audioFileUrl: audioFileUrl,
       isMuted: false,
       sampleType: type
@@ -339,10 +341,12 @@ final class MusicEditorViewController: UIViewController {
       recordMicrophoneButton.backgroundColor = .red
       audioRecorder.record()
     }
+    selectionHaptic()
   }
 
   @objc
   private func recordSampleTapped() {
+    selectionHaptic()
     shouldRecord.toggle()
     recordSampleButton.backgroundColor = shouldRecord ? .red : .white
 
@@ -359,6 +363,7 @@ final class MusicEditorViewController: UIViewController {
 
   @objc
   private func playPauseTapped() {
+    selectionHaptic()
     if isAllPlaying {
       audioMixer.pauseAll()
       isAllPlaying = false
@@ -372,12 +377,20 @@ final class MusicEditorViewController: UIViewController {
 
   @objc
   private func layersButtonTapped() {
+    selectionHaptic()
     let newAlpha: CGFloat = layersView.alpha == 1 ? 0 : 1
     let isHidden = newAlpha == 0
     UIView.animate(withDuration: 0.3) { [weak self] in
       self?.layersView.alpha = newAlpha
       self?.chevronImageView.transform = isHidden ? CGAffineTransform(rotationAngle: CGFloat.pi) : .identity
       self?.layersButton.backgroundColor = isHidden ? .white : .accentColor
+    }
+  }
+
+  private func selectionHaptic() {
+    DispatchQueue.global().async { [weak self] in
+      self?.feedbackGenerator.prepare()
+      self?.feedbackGenerator.selectionChanged()
     }
   }
 }

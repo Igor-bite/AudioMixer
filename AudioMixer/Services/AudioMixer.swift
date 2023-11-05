@@ -315,7 +315,9 @@ final class AudioMixer: AudioControlling {
 
 extension AVAudioPlayerNode {
   func play(layer: LayerModel) {
-    guard !isPlaying else { return }
+    if isPlaying {
+      stop()
+    }
     play(file: layer.audioFile)
   }
 

@@ -8,6 +8,19 @@ enum SampleType: String {
   case trumpet
   case drum
   case voice
+
+  var layerPrefix: String {
+    switch self {
+    case .guitar:
+      return "Гитара"
+    case .trumpet:
+      return "Духовые"
+    case .drum:
+      return "Ударные"
+    case .voice:
+      return "Вокал"
+    }
+  }
 }
 
 final class LayerModel: Hashable {
