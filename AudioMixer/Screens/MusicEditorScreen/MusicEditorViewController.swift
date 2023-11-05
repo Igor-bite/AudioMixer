@@ -143,6 +143,10 @@ final class MusicEditorViewController: UIViewController {
     return view
   }()
 
+  private var isLayersViewHidden: Bool {
+    layersView.alpha == .zero
+  }
+
   private var layersHeightConstraint: ConstraintMakerEditable?
 
   private lazy var recordMicrophoneButton = {
@@ -307,7 +311,7 @@ final class MusicEditorViewController: UIViewController {
     }
     audioMixer.play(layer)
     settingsControlAreaView.configure(with: layer)
-    if layersView.isEmpty {
+    if layersView.isEmpty, isLayersViewHidden {
       layersButtonTapped()
     }
     layersView.addLayer(layer)
@@ -378,12 +382,12 @@ final class MusicEditorViewController: UIViewController {
   @objc
   private func layersButtonTapped() {
     selectionHaptic()
-    let newAlpha: CGFloat = layersView.alpha == 1 ? 0 : 1
-    let isHidden = newAlpha == 0
+    let newAlpha: CGFloat = isLayersViewHidden ? 1 : 0
     UIView.animate(withDuration: 0.3) { [weak self] in
-      self?.layersView.alpha = newAlpha
-      self?.chevronImageView.transform = isHidden ? CGAffineTransform(rotationAngle: CGFloat.pi) : .identity
-      self?.layersButton.backgroundColor = isHidden ? .white : .accentColor
+      guard let self else { return }
+      layersView.alpha = newAlpha
+      chevronImageView.transform = isLayersViewHidden ? CGAffineTransform(rotationAngle: CGFloat.pi) : .identity
+      layersButton.backgroundColor = isLayersViewHidden ? .white : .accentColor
     }
   }
 
