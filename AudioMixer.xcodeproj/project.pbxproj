@@ -44,6 +44,11 @@
 		0A22C2612AF6999100AC88D2 /* trumpet_4.wav in Resources */ = {isa = PBXBuildFile; fileRef = 0A22C2592AF6999100AC88D2 /* trumpet_4.wav */; };
 		0A22C2642AF6E8BB00AC88D2 /* AVAudioPCMBuffer+Processing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A22C2632AF6E8BA00AC88D2 /* AVAudioPCMBuffer+Processing.swift */; };
 		0A22C2662AF6FAF500AC88D2 /* GradientView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A22C2652AF6FAF500AC88D2 /* GradientView.swift */; };
+		0A22C2692AF78E4900AC88D2 /* SettingsControlView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A22C2682AF78E4900AC88D2 /* SettingsControlView.swift */; };
+		0A22C26B2AF790D500AC88D2 /* RulerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A22C26A2AF790D500AC88D2 /* RulerView.swift */; };
+		0A22C26D2AF79F9500AC88D2 /* CGFloat+Normalization.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A22C26C2AF79F9500AC88D2 /* CGFloat+Normalization.swift */; };
+		0A22C26F2AF7ABBA00AC88D2 /* Colors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A22C26E2AF7ABBA00AC88D2 /* Colors.swift */; };
+		0A22C2712AF7B53200AC88D2 /* clamp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A22C2702AF7B53200AC88D2 /* clamp.swift */; };
 		0A35D8502AF42B5400E283B5 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A35D84F2AF42B5400E283B5 /* AppDelegate.swift */; };
 		0A35D8592AF42B5600E283B5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0A35D8582AF42B5600E283B5 /* Assets.xcassets */; };
 		0A35D85C2AF42B5600E283B5 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0A35D85A2AF42B5600E283B5 /* LaunchScreen.storyboard */; };
@@ -87,6 +92,11 @@
 		0A22C2592AF6999100AC88D2 /* trumpet_4.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = trumpet_4.wav; sourceTree = "<group>"; };
 		0A22C2632AF6E8BA00AC88D2 /* AVAudioPCMBuffer+Processing.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "AVAudioPCMBuffer+Processing.swift"; sourceTree = "<group>"; };
 		0A22C2652AF6FAF500AC88D2 /* GradientView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GradientView.swift; sourceTree = "<group>"; };
+		0A22C2682AF78E4900AC88D2 /* SettingsControlView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsControlView.swift; sourceTree = "<group>"; };
+		0A22C26A2AF790D500AC88D2 /* RulerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RulerView.swift; sourceTree = "<group>"; };
+		0A22C26C2AF79F9500AC88D2 /* CGFloat+Normalization.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CGFloat+Normalization.swift"; sourceTree = "<group>"; };
+		0A22C26E2AF7ABBA00AC88D2 /* Colors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Colors.swift; sourceTree = "<group>"; };
+		0A22C2702AF7B53200AC88D2 /* clamp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = clamp.swift; sourceTree = "<group>"; };
 		0A35D84C2AF42B5400E283B5 /* AudioMixer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AudioMixer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0A35D84F2AF42B5400E283B5 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		0A35D8582AF42B5600E283B5 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -124,9 +134,12 @@
 			isa = PBXGroup;
 			children = (
 				0A22C2652AF6FAF500AC88D2 /* GradientView.swift */,
+				0A22C2682AF78E4900AC88D2 /* SettingsControlView.swift */,
+				0A22C26A2AF790D500AC88D2 /* RulerView.swift */,
 				0A22C2472AF59BCA00AC88D2 /* LayersView */,
 				0A22C2212AF45D4200AC88D2 /* WaveformStub */,
 				0A22C2362AF554FC00AC88D2 /* SelectorButton */,
+				0A22C26E2AF7ABBA00AC88D2 /* Colors.swift */,
 			);
 			path = UIComponents;
 			sourceTree = "<group>";
@@ -200,6 +213,8 @@
 				0A22C2342AF550EA00AC88D2 /* Insets.swift */,
 				0A22C2322AF54C8400AC88D2 /* UIViewExtensions.swift */,
 				0A22C2392AF55A7600AC88D2 /* Action.swift */,
+				0A22C26C2AF79F9500AC88D2 /* CGFloat+Normalization.swift */,
+				0A22C2702AF7B53200AC88D2 /* clamp.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -437,13 +452,18 @@
 				0A22C2492AF59BD700AC88D2 /* LayersView.swift in Sources */,
 				0A22C22D2AF549C500AC88D2 /* SelectorButton.swift in Sources */,
 				0A22C24D2AF5A24D00AC88D2 /* LayerCell.swift in Sources */,
+				0A22C26B2AF790D500AC88D2 /* RulerView.swift in Sources */,
 				0A35D86B2AF43BD100E283B5 /* Assets.swift in Sources */,
+				0A22C26D2AF79F9500AC88D2 /* CGFloat+Normalization.swift in Sources */,
 				0A22C22B2AF5496D00AC88D2 /* MusicEditorViewController.swift in Sources */,
 				0A22C23C2AF5920300AC88D2 /* UIStackViewExtensions.swift in Sources */,
+				0A22C2692AF78E4900AC88D2 /* SettingsControlView.swift in Sources */,
+				0A22C26F2AF7ABBA00AC88D2 /* Colors.swift in Sources */,
 				0A22C20F2AF443C100AC88D2 /* ScreenAssembly.swift in Sources */,
 				0A22C2262AF45D4200AC88D2 /* WaveformStubView.swift in Sources */,
 				0A22C2382AF5551100AC88D2 /* SelectorButtonItem.swift in Sources */,
 				0A22C21E2AF454AE00AC88D2 /* WaveformAnalyzer.swift in Sources */,
+				0A22C2712AF7B53200AC88D2 /* clamp.swift in Sources */,
 				0A22C2352AF550EA00AC88D2 /* Insets.swift in Sources */,
 				0A22C2662AF6FAF500AC88D2 /* GradientView.swift in Sources */,
 				0A22C2292AF45D4200AC88D2 /* ChangeBarColorAnimation.swift in Sources */,

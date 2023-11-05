@@ -36,7 +36,7 @@ final class LayerCell: UICollectionViewCell {
 
   private lazy var progressView = {
     let view = UIView()
-    view.backgroundColor = UIColor(red: 0.66, green: 0.858, blue: 0.064, alpha: 1)
+    view.backgroundColor = .accentColor
     view.clipsToBounds = true
     return view
   }()

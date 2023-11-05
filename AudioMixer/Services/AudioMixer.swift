@@ -10,7 +10,9 @@ protocol AudioControlling {
   func pause(_ layer: LayerModel)
   func togglePlayingState(for layer: LayerModel)
   func setVolume(for layer: LayerModel, volume: Float)
+  func volume(for layer: LayerModel) -> Float
   func setRate(for layer: LayerModel, rate: Float)
+  func rate(for layer: LayerModel) -> Float
   func isLayerPlaying(_ layer: LayerModel) -> Bool
   func playedTime(_ layer: LayerModel) -> Double
 }
@@ -34,6 +36,7 @@ final class AudioMixer: AudioControlling {
   private let audioSession = AVAudioSession.sharedInstance()
   private var mixerNodeInputBus = AVAudioNodeBus.min
   private var playerNodes = [LayerModel: AVAudioPlayerNode]()
+  private var pitchNodes = [LayerModel: AVAudioUnitTimePitch]()
   private var mixerNodeInputBusCache = [LayerModel: AVAudioNodeBus]()
 
   private lazy var previewPlayerNode = makePreviewPlayerNode()
@@ -88,9 +91,29 @@ final class AudioMixer: AudioControlling {
     node.volume = volume
   }
 
-  func setRate(for layer: LayerModel, rate: Float) {
+  func setPan(for layer: LayerModel, pan: Float) {
     guard let node = playerNodes[layer] else { return }
+    node.pan = pan
+  }
+
+  func setPitch(for layer: LayerModel, pitch: Float) {
+    guard let node = pitchNodes[layer] else { return }
+    node.pitch = pitch
+  }
+
+  func setRate(for layer: LayerModel, rate: Float) {
+    guard let node = pitchNodes[layer] else { return }
     node.rate = rate
+  }
+
+  func volume(for layer: LayerModel) -> Float {
+    guard let node = playerNodes[layer] else { return .zero }
+    return node.volume
+  }
+
+  func rate(for layer: LayerModel) -> Float {
+    guard let node = pitchNodes[layer] else { return .zero }
+    return node.rate
   }
 
   func isLayerPlaying(_ layer: LayerModel) -> Bool {
@@ -213,19 +236,26 @@ final class AudioMixer: AudioControlling {
   }
 
   private func makeAndAttachPlayerNode(for layer: LayerModel) -> AVAudioPlayerNode {
-    let node = AVAudioPlayerNode()
-    playerNodes[layer] = node
-    audioEngine.attach(node)
+    let playerNode = AVAudioPlayerNode()
+    playerNodes[layer] = playerNode
+    audioEngine.attach(playerNode)
+
+    let pitchNode = AVAudioUnitTimePitch()
+    pitchNodes[layer] = pitchNode
+    audioEngine.attach(pitchNode)
+
+    audioEngine.connect(playerNode, to: pitchNode, format: nil)
+
     let mixerNodeInputBus = mixerNodeInputBus(for: layer)
     audioEngine.connect(
-      node,
+      pitchNode,
       to: layersMixerNode,
       fromBus: .zero,
       toBus: mixerNodeInputBus,
       format: nil
     )
     audioEngine.prepare()
-    return node
+    return playerNode
   }
 
   private func mixerNodeInputBus(for layer: LayerModel) -> AVAudioNodeBus {

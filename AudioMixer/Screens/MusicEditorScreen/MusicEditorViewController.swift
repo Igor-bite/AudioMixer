@@ -17,7 +17,7 @@ final class MusicEditorViewController: UIViewController {
     title: "гитара",
     image: Asset.guitar.image,
     closedBackgroundColor: .white,
-    openedBackgroundColor: UIColor(red: 0.66, green: 0.858, blue: 0.064, alpha: 1),
+    openedBackgroundColor: .accentColor,
     selectedItemBackgroundColor: .white,
     itemTextColor: .black,
     items: [
@@ -56,7 +56,7 @@ final class MusicEditorViewController: UIViewController {
     title: "ударные",
     image: Asset.drums.image,
     closedBackgroundColor: .white,
-    openedBackgroundColor: UIColor(red: 0.66, green: 0.858, blue: 0.064, alpha: 1),
+    openedBackgroundColor: .accentColor,
     selectedItemBackgroundColor: .white,
     itemTextColor: .black,
     items: [
@@ -94,7 +94,7 @@ final class MusicEditorViewController: UIViewController {
     title: "духовые",
     image: Asset.trumpet.image,
     closedBackgroundColor: .white,
-    openedBackgroundColor: UIColor(red: 0.66, green: 0.858, blue: 0.064, alpha: 1),
+    openedBackgroundColor: .accentColor,
     selectedItemBackgroundColor: .white,
     itemTextColor: .black,
     items: [
@@ -202,8 +202,9 @@ final class MusicEditorViewController: UIViewController {
   }()
 
   private lazy var settingsControlAreaView = {
-    let gradientColor = UIColor(red: 0.353, green: 0.314, blue: 0.886, alpha: 1)
-    let view = GradientView(colors: [gradientColor.withAlphaComponent(0), gradientColor])
+    let view = SettingsControlView(audioController: audioMixer)
+    view.layer.borderColor = UIColor.gray.cgColor
+    view.layer.borderWidth = 1 / UIScreen.main.scale
     return view
   }()
 
@@ -239,7 +240,8 @@ final class MusicEditorViewController: UIViewController {
       make.leading.equalToSuperview().offset(16)
       make.trailing.equalToSuperview().offset(-16)
       make.top.equalTo(stack.snp.bottom).offset(36)
-      make.bottom.equalTo(layersView.snp.bottom)
+      make.height.equalTo(settingsControlAreaView.snp.width)
+      make.bottom.lessThanOrEqualTo(layersView.snp.bottom).priority(.high)
     }
 
     layersView.snp.makeConstraints { make in
@@ -304,6 +306,7 @@ final class MusicEditorViewController: UIViewController {
       self.previewLayerPlaying = nil
     }
     audioMixer.play(layer)
+    settingsControlAreaView.configure(with: layer)
     layersView.addLayer(layer)
   }
 
@@ -372,7 +375,7 @@ final class MusicEditorViewController: UIViewController {
     UIView.animate(withDuration: 0.3) { [weak self] in
       self?.layersView.alpha = newAlpha
       self?.chevronImageView.transform = isHidden ? CGAffineTransform(rotationAngle: CGFloat.pi) : .identity
-      self?.layersButton.backgroundColor = isHidden ? .white : UIColor(red: 0.66, green: 0.858, blue: 0.064, alpha: 1)
+      self?.layersButton.backgroundColor = isHidden ? .white : .accentColor
     }
   }
 }
