@@ -72,7 +72,7 @@ final class SettingsControlView: UIView {
     fatalError("init(coder:) has not been implemented")
   }
 
-  func configure(with layer: LayerModel) {
+  func configure(with layer: LayerModel?) {
     self.layerModel = layer
     convertSettingsToLocation()
   }

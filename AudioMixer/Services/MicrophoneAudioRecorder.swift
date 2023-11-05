@@ -8,7 +8,7 @@ final class MicrophoneAudioRecorder {
   private var voiceRecorder: AVAudioRecorder?
   private var recordingLayer: LayerModel?
 
-  private var recordingsCounter = 1
+  var recordingsCounter = 1
 
   var isRecording: Bool {
     voiceRecorder != nil && voiceRecorder?.isRecording == true
@@ -16,7 +16,7 @@ final class MicrophoneAudioRecorder {
 
   private let format: AVAudioFormat
 
-  init(format: AVAudioFormat) {
+  init(format: AVAudioFormat, notAllowedAction: @escaping () -> Void) {
     self.format = format
     do {
       try recordingSession.setCategory(.playAndRecord, mode: .default)
@@ -24,6 +24,7 @@ final class MicrophoneAudioRecorder {
       recordingSession.requestRecordPermission { allowed in
         DispatchQueue.main.async {
           if !allowed {
+            notAllowedAction()
             Logger.log("Not allowed to use mic")
           }
         }
@@ -33,7 +34,10 @@ final class MicrophoneAudioRecorder {
     }
   }
 
-  func record() {
+  func record() -> Bool {
+    if recordingSession.recordPermission != .granted {
+      return false
+    }
     let layer = makeVoiceMemoLayer()
     recordingLayer = layer
 
@@ -44,6 +48,7 @@ final class MicrophoneAudioRecorder {
       stopRecording()
       handleError(e: error)
     }
+    return true
   }
 
   private func handleError(e: Error) {

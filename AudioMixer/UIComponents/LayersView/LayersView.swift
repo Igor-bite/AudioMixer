@@ -7,6 +7,7 @@ final class LayersView: UIView {
   private let audioController: AudioControlling
   private let heightDidChange: (_ height: CGFloat) -> Void
   private let didSelectLayer: (_ layer: LayerModel) -> Void
+  private let didDeleteLayer: (_ layer: LayerModel) -> Void
 
   private lazy var collectionView = makeCollectionView()
   private var dataSource: UICollectionViewDiffableDataSource<Int, LayerModel>?
@@ -23,11 +24,13 @@ final class LayersView: UIView {
   init(
     audioController: AudioControlling,
     didSelectLayer: @escaping (_ layer: LayerModel) -> Void,
-    heightDidChange: @escaping (_ height: CGFloat) -> Void
+    heightDidChange: @escaping (_ height: CGFloat) -> Void,
+    didDeleteLayer: @escaping (_ layer: LayerModel) -> Void
   ) {
     self.audioController = audioController
     self.didSelectLayer = didSelectLayer
     self.heightDidChange = heightDidChange
+    self.didDeleteLayer = didDeleteLayer
     super.init(frame: .zero)
     setupUI()
   }
@@ -108,9 +111,9 @@ final class LayersView: UIView {
     ) as? LayerCell
     else { return UICollectionViewCell() }
     cell.configure(with: layer, audioController: audioController) { [weak self] in
-      guard let layerIndex = self?.layers.firstIndex(of: layer) else { return }
-      self?.layers.remove(at: layerIndex)
+      self?.layers.remove(at: indexPath.item)
       self?.updateCollectionView()
+      self?.didDeleteLayer(layer)
     }
     return cell
   }

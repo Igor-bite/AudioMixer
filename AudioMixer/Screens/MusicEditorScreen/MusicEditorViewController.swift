@@ -8,7 +8,10 @@ final class MusicEditorViewController: UIViewController {
 
   private lazy var feedbackGenerator = UISelectionFeedbackGenerator()
   private lazy var audioMixer = AudioMixer()
-  private lazy var audioRecorder = MicrophoneAudioRecorder(format: audioMixer.format)
+  private lazy var audioRecorder = MicrophoneAudioRecorder(format: audioMixer.format) { [weak self] in
+    self?.showMicPrivacyAlert()
+  }
+
   private var previewLayerPlaying: LayerModel?
 
   private var shouldRecord = false
@@ -27,6 +30,9 @@ final class MusicEditorViewController: UIViewController {
       .init(title: "сэмпл 3"),
       .init(title: "сэмпл 4"),
       .init(title: "сэмпл 5"),
+      .init(title: "сэмпл 6"),
+      .init(title: "сэмпл 7"),
+      .init(title: "сэмпл 8"),
     ],
     tapAction: { [weak self] in
       self?.selectorTapped(type: .guitar)
@@ -65,6 +71,10 @@ final class MusicEditorViewController: UIViewController {
       .init(title: "сэмпл 2"),
       .init(title: "сэмпл 3"),
       .init(title: "сэмпл 4"),
+      .init(title: "сэмпл 5"),
+      .init(title: "сэмпл 6"),
+      .init(title: "сэмпл 7"),
+      .init(title: "сэмпл 8"),
     ],
     tapAction: { [weak self] in
       self?.selectorTapped(type: .drum)
@@ -103,6 +113,10 @@ final class MusicEditorViewController: UIViewController {
       .init(title: "сэмпл 2"),
       .init(title: "сэмпл 3"),
       .init(title: "сэмпл 4"),
+      .init(title: "сэмпл 5"),
+      .init(title: "сэмпл 6"),
+      .init(title: "сэмпл 7"),
+      .init(title: "сэмпл 8"),
     ],
     tapAction: { [weak self] in
       self?.selectorTapped(type: .trumpet)
@@ -137,6 +151,12 @@ final class MusicEditorViewController: UIViewController {
       self?.layersHeightConstraint?.constraint.update(offset: height)
       UIView.animate(withDuration: 0.3) { [weak self] in
         self?.view.layoutSubviews()
+      }
+    } didDeleteLayer: { [weak self] layer in
+      if self?.settingsChangingLayer == layer {
+        self?.hideWaveform()
+        self?.settingsControlAreaView.configure(with: nil)
+        self?.audioMixer.stop(layer)
       }
     }
     view.alpha = .zero
@@ -296,12 +316,12 @@ final class MusicEditorViewController: UIViewController {
 
     waveFormScrollView.snp.makeConstraints { make in
       make.leading.trailing.equalToSuperview()
-      make.bottom.equalTo(layersButton.snp.top).offset(-16)
+      make.bottom.equalTo(layersButton.snp.top).offset(-32)
       make.height.equalTo(Constants.waveformHeight)
     }
 
     layersView.snp.makeConstraints { make in
-      make.bottom.equalToSuperview().offset(-100)
+      make.bottom.equalTo(waveFormScrollView.snp.top).offset(-12)
       make.leading.trailing.equalToSuperview()
       layersHeightConstraint = make.height.equalTo(0)
     }
@@ -350,17 +370,20 @@ final class MusicEditorViewController: UIViewController {
 
   private func sampleSelected(at index: Int, type: SampleType) {
     guard let layer = layerModel(from: index, type: type) else { return }
-    if let previewLayerPlaying {
-      audioMixer.stopPreview(for: previewLayerPlaying)
-      self.previewLayerPlaying = nil
+    DispatchQueue.main.async { [weak self] in
+      guard let self else { return }
+      if let previewLayerPlaying {
+        audioMixer.stopPreview(for: previewLayerPlaying)
+        self.previewLayerPlaying = nil
+      }
+      audioMixer.play(layer)
+      settingsControlAreaView.configure(with: layer)
+      if layersView.isEmpty, isLayersViewHidden {
+        layersButtonTapped()
+      }
+      layersView.addLayer(layer)
+      showWaveform(for: layer)
     }
-    audioMixer.play(layer)
-    settingsControlAreaView.configure(with: layer)
-    if layersView.isEmpty, isLayersViewHidden {
-      layersButtonTapped()
-    }
-    layersView.addLayer(layer)
-    showWaveform(for: layer)
   }
 
   private func showWaveform(for layer: LayerModel) {
@@ -452,24 +475,34 @@ final class MusicEditorViewController: UIViewController {
       showWaveform(for: layer)
       layersView.addLayer(layer)
       audioMixer.play(layer)
+      settingsControlAreaView.configure(with: layer)
     } else {
+      let isSuccess = audioRecorder.record()
+      if !isSuccess {
+        if audioRecorder.recordingsCounter == 1 {
+          showMicPrivacyAlert()
+        }
+        return
+      }
+      audioMixer.pauseAll()
       recordMicrophoneButton.backgroundColor = .red
-      audioRecorder.record()
     }
   }
 
   @objc
   private func recordSampleTapped() {
+    guard !layersView.isEmpty else {
+      showNoLayersAlert()
+      return
+    }
     selectionHaptic()
     shouldRecord.toggle()
     recordSampleButton.backgroundColor = shouldRecord ? .red : .white
-
+    audioMixer.playAll()
     audioMixer.renderToFile(isStart: shouldRecord) { fileUrl in
       DispatchQueue.main.async { [weak self] in
         let activityViewController = UIActivityViewController(activityItems: [fileUrl], applicationActivities: nil)
-        activityViewController.completionWithItemsHandler = { _, _, _, _ in
-          print("end")
-        }
+        activityViewController.completionWithItemsHandler = { _, _, _, _ in }
         self?.present(activityViewController, animated: true, completion: nil)
       }
     }
@@ -504,6 +537,37 @@ final class MusicEditorViewController: UIViewController {
   private func selectionHaptic() {
     feedbackGenerator.prepare()
     feedbackGenerator.selectionChanged()
+  }
+
+  private func showMicPrivacyAlert() {
+    let alertController = UIAlertController(
+      title: "Нет доступа к микрофону",
+      message: "Чтобы использовать запись с микрофона нужно дать разрешение в настройках",
+      preferredStyle: .alert
+    )
+
+    let settingsAction = UIAlertAction(title: "Настройки", style: .default) { _ in
+      guard let settingsUrl = URL(string: UIApplication.openSettingsURLString) else { return }
+      if UIApplication.shared.canOpenURL(settingsUrl) {
+        UIApplication.shared.open(settingsUrl) { _ in }
+      }
+    }
+    alertController.addAction(settingsAction)
+    let cancelAction = UIAlertAction(title: "Отменить", style: .default, handler: nil)
+    alertController.addAction(cancelAction)
+    present(alertController, animated: true, completion: nil)
+  }
+
+  private func showNoLayersAlert() {
+    let alertController = UIAlertController(
+      title: "Пока что записывать нечего",
+      message: "Добавьте слои используя кнопки сверху",
+      preferredStyle: .alert
+    )
+
+    let settingsAction = UIAlertAction(title: "Ок", style: .default, handler: nil)
+    alertController.addAction(settingsAction)
+    present(alertController, animated: true, completion: nil)
   }
 }
 

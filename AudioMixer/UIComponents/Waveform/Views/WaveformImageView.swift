@@ -15,10 +15,10 @@ public class WaveformImageView: UIImageView {
 
   override public var image: UIImage? {
     didSet {
+      progressView.frame.size = image?.size ?? .zero
+      progressView.image = image?.withRenderingMode(.alwaysTemplate)
       guard let image else { return }
       imageDidSet?(image)
-      progressView.frame.size = image.size
-      progressView.image = image.withRenderingMode(.alwaysTemplate)
       if let progress {
         updateProgress(progress)
       }
@@ -92,7 +92,6 @@ public class WaveformImageView: UIImageView {
 extension WaveformImageView {
   fileprivate func updateWaveform() {
     guard let audioURL = waveformAudioURL else { return }
-
     Task {
       do {
         let image = try await waveformImageDrawer.waveformImage(
@@ -102,6 +101,7 @@ extension WaveformImageView {
         )
 
         await MainActor.run {
+          guard audioURL == waveformAudioURL else { return }
           self.image = image
         }
       } catch {
