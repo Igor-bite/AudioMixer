@@ -67,6 +67,9 @@
 		0AA94DF32AF835330087AAC5 /* trumpet_1.wav in Resources */ = {isa = PBXBuildFile; fileRef = 0AA94DEB2AF835330087AAC5 /* trumpet_1.wav */; };
 		0AA94DF42AF835330087AAC5 /* trumpet_8.wav in Resources */ = {isa = PBXBuildFile; fileRef = 0AA94DEC2AF835330087AAC5 /* trumpet_8.wav */; };
 		0AA94DF72AF8368D0087AAC5 /* trumpet_4.wav in Resources */ = {isa = PBXBuildFile; fileRef = 0AA94DF62AF8368D0087AAC5 /* trumpet_4.wav */; };
+		0AE1EE942B1357E100363CA8 /* MusicEditorViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AE1EE932B1357E100363CA8 /* MusicEditorViewModel.swift */; };
+		0AE1EE9A2B138A8A00363CA8 /* AlertPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AE1EE992B138A8A00363CA8 /* AlertPresenter.swift */; };
+		0AE1EE9F2B13946000363CA8 /* Protocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AE1EE9E2B13946000363CA8 /* Protocols.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -131,6 +134,9 @@
 		0AA94DEB2AF835330087AAC5 /* trumpet_1.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = trumpet_1.wav; sourceTree = "<group>"; };
 		0AA94DEC2AF835330087AAC5 /* trumpet_8.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = trumpet_8.wav; sourceTree = "<group>"; };
 		0AA94DF62AF8368D0087AAC5 /* trumpet_4.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = trumpet_4.wav; sourceTree = "<group>"; };
+		0AE1EE932B1357E100363CA8 /* MusicEditorViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MusicEditorViewModel.swift; sourceTree = "<group>"; };
+		0AE1EE992B138A8A00363CA8 /* AlertPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertPresenter.swift; sourceTree = "<group>"; };
+		0AE1EE9E2B13946000363CA8 /* Protocols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Protocols.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -179,9 +185,9 @@
 			isa = PBXGroup;
 			children = (
 				0A22C20E2AF443C100AC88D2 /* ScreenAssembly.swift */,
-				0A22C24E2AF5B21300AC88D2 /* AudioMixer.swift */,
-				0A22C2152AF446D500AC88D2 /* Logger.swift */,
-				0A22C2502AF6769B00AC88D2 /* MicrophoneAudioRecorder.swift */,
+				0AE1EE992B138A8A00363CA8 /* AlertPresenter.swift */,
+				0AE1EE982B138A7800363CA8 /* Audio */,
+				0AE1EE972B138A6D00363CA8 /* Logging */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -212,6 +218,8 @@
 			isa = PBXGroup;
 			children = (
 				0A22C22A2AF5496D00AC88D2 /* MusicEditorViewController.swift */,
+				0AE1EE932B1357E100363CA8 /* MusicEditorViewModel.swift */,
+				0AE1EE9E2B13946000363CA8 /* Protocols.swift */,
 			);
 			path = MusicEditorScreen;
 			sourceTree = "<group>";
@@ -364,6 +372,23 @@
 			path = Generated;
 			sourceTree = "<group>";
 		};
+		0AE1EE972B138A6D00363CA8 /* Logging */ = {
+			isa = PBXGroup;
+			children = (
+				0A22C2152AF446D500AC88D2 /* Logger.swift */,
+			);
+			path = Logging;
+			sourceTree = "<group>";
+		};
+		0AE1EE982B138A7800363CA8 /* Audio */ = {
+			isa = PBXGroup;
+			children = (
+				0A22C24E2AF5B21300AC88D2 /* AudioMixer.swift */,
+				0A22C2502AF6769B00AC88D2 /* MicrophoneAudioRecorder.swift */,
+			);
+			path = Audio;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -510,6 +535,7 @@
 				0A22C23A2AF55A7600AC88D2 /* Action.swift in Sources */,
 				0A0DF4D82AF7E5E100BEFA70 /* UIScreenExtensions.swift in Sources */,
 				0A22C24F2AF5B21300AC88D2 /* AudioMixer.swift in Sources */,
+				0AE1EE9F2B13946000363CA8 /* Protocols.swift in Sources */,
 				0A22C2332AF54C8400AC88D2 /* UIViewExtensions.swift in Sources */,
 				0A22C24B2AF59C7B00AC88D2 /* LayerModel.swift in Sources */,
 				0A0DF4F22AF8083C00BEFA70 /* LinearWaveformRenderer.swift in Sources */,
@@ -530,10 +556,12 @@
 				0A0DF4F72AF8083C00BEFA70 /* WaveformAnalyzer.swift in Sources */,
 				0A22C26D2AF79F9500AC88D2 /* CGFloat+Normalization.swift in Sources */,
 				0A22C22B2AF5496D00AC88D2 /* MusicEditorViewController.swift in Sources */,
+				0AE1EE9A2B138A8A00363CA8 /* AlertPresenter.swift in Sources */,
 				0A22C23C2AF5920300AC88D2 /* UIStackViewExtensions.swift in Sources */,
 				0A0DF4F42AF8083C00BEFA70 /* WaveformImageDrawer.swift in Sources */,
 				0A6573AE2AF7CF2100B8D43F /* WeakHolder.swift in Sources */,
 				0A22C2692AF78E4900AC88D2 /* SettingsControlView.swift in Sources */,
+				0AE1EE942B1357E100363CA8 /* MusicEditorViewModel.swift in Sources */,
 				0A22C26F2AF7ABBA00AC88D2 /* Colors.swift in Sources */,
 				0A22C20F2AF443C100AC88D2 /* ScreenAssembly.swift in Sources */,
 				0A22C2382AF5551100AC88D2 /* SelectorButtonItem.swift in Sources */,

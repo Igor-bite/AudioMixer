@@ -3,7 +3,7 @@
 import SnapKit
 import UIKit
 
-final class MusicEditorViewController: UIViewController {
+final class MusicEditorViewController: UIViewController, MusicEditorInput {
   override var preferredStatusBarStyle: UIStatusBarStyle { .lightContent }
 
   private lazy var feedbackGenerator = UISelectionFeedbackGenerator()
@@ -147,6 +147,7 @@ final class MusicEditorViewController: UIViewController {
     let view = LayersView(audioController: audioMixer) { [weak self] layer in
       self?.layersButtonTapped()
       self?.settingsControlAreaView.configure(with: layer)
+      self?.showWaveform(for: layer)
     } heightDidChange: { [weak self] height in
       self?.layersHeightConstraint?.constraint.update(offset: height)
       UIView.animate(withDuration: 0.3) { [weak self] in
@@ -275,6 +276,18 @@ final class MusicEditorViewController: UIViewController {
   private var previousProgress: Double = -1
 
   private var waveformWidthConstraint: ConstraintMakerEditable?
+
+  private let viewModel: MusicEditorOutput
+
+  init(viewModel: MusicEditorOutput) {
+    self.viewModel = viewModel
+    super.init(nibName: nil, bundle: nil)
+  }
+
+  @available(*, unavailable)
+  required init?(coder: NSCoder) {
+    fatalError("init(coder:) has not been implemented")
+  }
 
   override func viewDidLoad() {
     super.viewDidLoad()

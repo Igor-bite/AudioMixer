@@ -12,12 +12,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
   ) -> Bool {
     window = UIWindow(frame: UIScreen.main.bounds)
-    guard let window = window else {
-      return false
-    }
+    guard let window = window else { return false }
 
-    let initialController = UINavigationController()
-    initialController.setViewControllers([screenAssembly.makeMusicEditor()], animated: false)
+    let initialController = screenAssembly.rootNavigationController
+    initialController.setViewControllers(
+      [screenAssembly.makeMusicEditor()],
+      animated: false
+    )
 
     window.rootViewController = initialController
     window.makeKeyAndVisible()
