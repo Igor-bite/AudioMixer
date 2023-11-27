@@ -12,7 +12,7 @@ final class ScreenAssembly {
   let audioMixer = AudioMixer()
   lazy var microphoneRecorder = MicrophoneAudioRecorder(
     format: audioMixer.format,
-    notAllowedAction: {} // TODO: make inside
+    alertPresenter: alertPresenter
   )
 
   func makeMusicEditor() -> UIViewController {

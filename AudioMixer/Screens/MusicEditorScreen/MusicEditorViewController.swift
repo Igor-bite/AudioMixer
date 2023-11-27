@@ -70,11 +70,11 @@ final class MusicEditorViewController: UIViewController, MusicEditorInput {
   }()
 
   private lazy var audioMixer = AudioMixer()
-  private lazy var audioRecorder = MicrophoneAudioRecorder(format: audioMixer.format) { [weak self] in
-    self?.showMicPrivacyAlert()
-  }
+  private lazy var audioRecorder = MicrophoneAudioRecorder(
+    format: audioMixer.format,
+    alertPresenter: alertPresenter
+  )
 
-  private var previewLayerPlaying: LayerModel?
   private var shouldRecord = false
   private var isAllPlaying = false
   private var settingsChangingLayer: LayerModel?
@@ -177,16 +177,8 @@ final class MusicEditorViewController: UIViewController, MusicEditorInput {
   }
 
   private func playSample(index: Int, type: SampleType) {
-    guard let layer = LayerModel(sampleType: type, postfix: "\(index + 1)"),
-          previewLayerPlaying != layer
-    else { return }
-
-    if let previewLayerPlaying {
-      audioMixer.stopPreview(for: previewLayerPlaying)
-    }
-
-    previewLayerPlaying = layer
-    audioMixer.playPreview(for: layer)
+    guard let layer = LayerModel(sampleType: type, postfix: "\(index + 1)") else { return }
+    viewModel.playPreview(for: layer)
   }
 
   private func sampleSelected(at index: Int, type: SampleType) {
@@ -195,10 +187,7 @@ final class MusicEditorViewController: UIViewController, MusicEditorInput {
 
     DispatchQueue.main.async { [weak self] in
       guard let self else { return }
-      if let previewLayerPlaying {
-        audioMixer.stopPreview(for: previewLayerPlaying)
-        self.previewLayerPlaying = nil
-      }
+      viewModel.stopPreview()
       if layersView.isEmpty {
         layersButton.isOpened = true
       }
@@ -208,8 +197,13 @@ final class MusicEditorViewController: UIViewController, MusicEditorInput {
     }
   }
 
-  private func showWaveform(for layer: LayerModel) {
+  private func setLayerForModifications(_ layer: LayerModel) {
     settingsChangingLayer = layer
+    showWaveform(for: layer)
+    settingsControlAreaView.configure(with: layer)
+  }
+
+  private func showWaveform(for layer: LayerModel) {
     previousProgress = -1
     let displayLink = displayLink
     displayLink.isPaused = false
@@ -281,21 +275,12 @@ final class MusicEditorViewController: UIViewController, MusicEditorInput {
       audioMixer.play(layer)
       setLayerForModifications(layer)
     } else {
-      let isSuccess = audioRecorder.record()
-      if !isSuccess {
-        if audioRecorder.recordingsCounter == 1 {
-          showMicPrivacyAlert()
-        }
-        return
-      }
       audioMixer.pauseAll()
       recordMicrophoneButton.backgroundColor = .red
+      audioRecorder.record { [weak self] in
+        self?.recordMicrophoneButton.backgroundColor = .white
+      }
     }
-  }
-
-  private func setLayerForModifications(_ layer: LayerModel) {
-    showWaveform(for: layer)
-    settingsControlAreaView.configure(with: layer)
   }
 
   @objc
@@ -342,23 +327,6 @@ final class MusicEditorViewController: UIViewController, MusicEditorInput {
     }
   }
 
-  private func showMicPrivacyAlert() {
-    let settingsAction = UIAlertAction(title: "Настройки", style: .default) { _ in
-      guard let settingsUrl = URL(string: UIApplication.openSettingsURLString) else { return }
-      if UIApplication.shared.canOpenURL(settingsUrl) {
-        UIApplication.shared.open(settingsUrl) { _ in }
-      }
-    }
-    let cancelAction = UIAlertAction(title: "Отменить", style: .default, handler: nil)
-
-    alertPresenter.showAlert(
-      title: "Нет доступа к микрофону",
-      message: "Чтобы использовать запись с микрофона нужно дать разрешение в настройках",
-      style: .alert,
-      actions: [settingsAction, cancelAction]
-    )
-  }
-
   private func showNoLayersAlert() {
     let okAction = UIAlertAction(title: "Ок", style: .default, handler: nil)
     alertPresenter.showAlert(
@@ -368,6 +336,8 @@ final class MusicEditorViewController: UIViewController, MusicEditorInput {
       actions: [okAction]
     )
   }
+
+  // MARK: - View factory
 
   private func makeGuitarSelector() -> SelectorButton {
     SelectorButton(model: SelectorButton.Model(
@@ -391,18 +361,11 @@ final class MusicEditorViewController: UIViewController, MusicEditorInput {
         self?.sampleSelected(at: .zero, type: .guitar)
       },
       closeWithoutSelectionAction: { [weak self] in
-        guard let self,
-              let previewLayerPlaying
-        else { return }
-        audioMixer.stopPreview(for: previewLayerPlaying)
+        self?.viewModel.stopPreview()
       },
       hoverAction: { [weak self] index in
         guard let index else {
-          guard let self,
-                let previewLayerPlaying
-          else { return }
-          audioMixer.stopPreview(for: previewLayerPlaying)
-          self.previewLayerPlaying = nil
+          self?.viewModel.stopPreview()
           return
         }
         self?.playSample(index: index, type: .guitar)
@@ -435,18 +398,11 @@ final class MusicEditorViewController: UIViewController, MusicEditorInput {
         self?.sampleSelected(at: .zero, type: .drum)
       },
       closeWithoutSelectionAction: { [weak self] in
-        guard let self,
-              let previewLayerPlaying
-        else { return }
-        audioMixer.stopPreview(for: previewLayerPlaying)
+        self?.viewModel.stopPreview()
       },
       hoverAction: { [weak self] index in
         guard let index else {
-          guard let self,
-                let previewLayerPlaying
-          else { return }
-          audioMixer.stopPreview(for: previewLayerPlaying)
-          self.previewLayerPlaying = nil
+          self?.viewModel.stopPreview()
           return
         }
         self?.playSample(index: index, type: .drum)
@@ -479,18 +435,11 @@ final class MusicEditorViewController: UIViewController, MusicEditorInput {
         self?.sampleSelected(at: .zero, type: .trumpet)
       },
       closeWithoutSelectionAction: { [weak self] in
-        guard let self,
-              let previewLayerPlaying
-        else { return }
-        audioMixer.stopPreview(for: previewLayerPlaying)
+        self?.viewModel.stopPreview()
       },
       hoverAction: { [weak self] index in
         guard let index else {
-          guard let self,
-                let previewLayerPlaying
-          else { return }
-          audioMixer.stopPreview(for: previewLayerPlaying)
-          self.previewLayerPlaying = nil
+          self?.viewModel.stopPreview()
           return
         }
         self?.playSample(index: index, type: .trumpet)
@@ -503,9 +452,8 @@ final class MusicEditorViewController: UIViewController, MusicEditorInput {
 
   private func makeLayersView() -> LayersView {
     let view = LayersView(audioController: audioMixer) { [weak self] layer in
-      self?.layersButton.isOpened = true
-      self?.settingsControlAreaView.configure(with: layer)
-      self?.showWaveform(for: layer)
+      self?.layersButton.isOpened = false
+      self?.setLayerForModifications(layer)
     } heightDidChange: { [weak self] height in
       self?.layersHeightConstraint?.constraint.update(offset: height)
       UIView.animate(withDuration: 0.3) { [weak self] in

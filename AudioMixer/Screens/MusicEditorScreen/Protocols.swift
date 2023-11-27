@@ -7,6 +7,9 @@ protocol MusicEditorInput: AnyObject {}
 
 // ViewModel
 protocol MusicEditorOutput {
+  func playPreview(for layer: LayerModel)
+  func stopPreview()
+
   func addLayer(_ layer: LayerModel)
   func changingLayerSet(to layer: LayerModel)
   func changeLayerSetting(setting: SettingType, value: Double)

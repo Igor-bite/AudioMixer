@@ -1,58 +1,38 @@
 // Created with love by Igor Klyuzhev in 2023
 
 import AVFoundation
-import Foundation
+import UIKit
 
 final class MicrophoneAudioRecorder {
+  private let format: AVAudioFormat
+  private let alertPresenter: AlertPresenting
   private let recordingSession = AVAudioSession.sharedInstance()
+
+  private var isSetupNeeded = true
   private var voiceRecorder: AVAudioRecorder?
   private var recordingLayer: LayerModel?
-
   var recordingsCounter = 1
-
   var isRecording: Bool {
     voiceRecorder != nil && voiceRecorder?.isRecording == true
   }
 
-  private let format: AVAudioFormat
-
-  init(format: AVAudioFormat, notAllowedAction: @escaping () -> Void) {
+  init(format: AVAudioFormat, alertPresenter: AlertPresenting) {
     self.format = format
-    do {
-      try recordingSession.setCategory(.playAndRecord, mode: .default)
-      try recordingSession.setActive(true)
-      recordingSession.requestRecordPermission { allowed in
-        DispatchQueue.main.async {
-          if !allowed {
-            notAllowedAction()
-            Logger.log("Not allowed to use mic")
-          }
+    self.alertPresenter = alertPresenter
+  }
+
+  func record(failureAction: @escaping () -> Void) {
+    if isSetupNeeded {
+      setup { [weak self] isSuccess in
+        guard isSuccess else {
+          failureAction()
+          return
         }
+        self?.startRecording(failureAction: failureAction)
       }
-    } catch {
-      handleError(e: error)
+    } else {
+      startRecording(failureAction: failureAction)
     }
-  }
-
-  func record() -> Bool {
-    if recordingSession.recordPermission != .granted {
-      return false
-    }
-    let layer = makeVoiceMemoLayer()
-    recordingLayer = layer
-
-    do {
-      voiceRecorder = try AVAudioRecorder(url: layer.audioFileUrl, format: format)
-      voiceRecorder?.record()
-    } catch {
-      stopRecording()
-      handleError(e: error)
-    }
-    return true
-  }
-
-  private func handleError(e: Error) {
-    Logger.log(e)
   }
 
   @discardableResult
@@ -65,6 +45,67 @@ final class MicrophoneAudioRecorder {
     }
     recordingLayer = nil
     return layer
+  }
+
+  private func startRecording(failureAction: @escaping () -> Void) {
+    guard recordingSession.recordPermission == .granted else {
+      showMicPrivacyAlert()
+      failureAction()
+      return
+    }
+
+    let layer = makeVoiceMemoLayer()
+    recordingLayer = layer
+
+    do {
+      voiceRecorder = try AVAudioRecorder(url: layer.audioFileUrl, format: format)
+      voiceRecorder?.record()
+    } catch {
+      stopRecording()
+      failureAction()
+      handleError(e: error)
+    }
+  }
+
+  private func setup(completion: @escaping (Bool) -> Void) {
+    isSetupNeeded = false
+    do {
+      try recordingSession.setCategory(.playAndRecord, mode: .default)
+      try recordingSession.setActive(true)
+      recordingSession.requestRecordPermission { allowed in
+        DispatchQueue.main.async { [weak self] in
+          if !allowed {
+            self?.showMicPrivacyAlert()
+            Logger.log("Not allowed to use mic")
+          }
+          completion(allowed)
+        }
+      }
+    } catch {
+      handleError(e: error)
+      completion(false)
+    }
+  }
+
+  private func showMicPrivacyAlert() {
+    let settingsAction = UIAlertAction(title: "Настройки", style: .default) { _ in
+      guard let settingsUrl = URL(string: UIApplication.openSettingsURLString) else { return }
+      if UIApplication.shared.canOpenURL(settingsUrl) {
+        UIApplication.shared.open(settingsUrl) { _ in }
+      }
+    }
+    let cancelAction = UIAlertAction(title: "Отменить", style: .default, handler: nil)
+
+    alertPresenter.showAlert(
+      title: "Нет доступа к микрофону",
+      message: "Чтобы использовать запись с микрофона нужно дать разрешение в настройках",
+      style: .alert,
+      actions: [settingsAction, cancelAction]
+    )
+  }
+
+  private func handleError(e: Error) {
+    Logger.log(e)
   }
 
   private func makeVoiceMemoLayer() -> LayerModel {
