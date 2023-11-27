@@ -21,7 +21,10 @@ final class ScreenAssembly {
       audioRecorder: microphoneRecorder
     )
 
-    let viewController = MusicEditorViewController(viewModel: viewModel)
+    let viewController = MusicEditorViewController(
+      viewModel: viewModel,
+      alertPresenter: alertPresenter
+    )
     viewModel.view = viewController
 
     return viewController

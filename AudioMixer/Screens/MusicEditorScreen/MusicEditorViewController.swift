@@ -22,75 +22,28 @@ final class MusicEditorViewController: UIViewController, MusicEditorInput {
   private lazy var trumpetSelector = makeTrumpetSelector()
   private lazy var layersView = makeLayersView()
 
-  private var isLayersViewHidden: Bool {
-    layersView.alpha == .zero
-  }
-
   private var layersHeightConstraint: ConstraintMakerEditable?
 
-  private lazy var recordMicrophoneButton = {
-    let view = UIButton()
-    view.smoothCornerRadius = .inset4
-    view.backgroundColor = .white
-    view.setImage(Asset.microphone.image, for: .normal)
-    view.addTarget(self, action: #selector(micRecordTapped), for: .touchUpInside)
-    return view
-  }()
+  private lazy var recordMicrophoneButton = makeButton(
+    image: Asset.microphone.image,
+    action: #selector(micRecordTapped)
+  )
 
-  private lazy var recordSampleButton = {
-    let view = UIButton()
-    view.smoothCornerRadius = .inset4
-    view.backgroundColor = .white
-    view.setImage(Asset.recordCircle.image, for: .normal)
-    view.addTarget(self, action: #selector(recordSampleTapped), for: .touchUpInside)
-    return view
-  }()
+  private lazy var recordSampleButton = makeButton(
+    image: Asset.recordCircle.image,
+    action: #selector(recordSampleTapped)
+  )
 
-  private lazy var playPauseButton = {
-    let view = UIButton()
-    view.smoothCornerRadius = .inset4
-    view.backgroundColor = .white
-    view.setImage(Asset.play.image, for: .normal)
-    view.addTarget(self, action: #selector(playPauseTapped), for: .touchUpInside)
-    return view
-  }()
-
-  private lazy var chevronImageView = {
-    let view = UIImageView()
-    view.contentMode = .scaleAspectFit
-    view.image = Asset.chevronUp.image
-    view.transform = CGAffineTransform(rotationAngle: CGFloat.pi)
-    return view
-  }()
-
-  private lazy var layersLabel = {
-    let label = UILabel()
-    label.text = "Слои"
-    label.textColor = .black
-    return label
-  }()
+  private lazy var playPauseButton = makeButton(
+    image: Asset.play.image,
+    action: #selector(playPauseTapped)
+  )
 
   private lazy var layersButton = {
-    let view = UIControl()
-    view.smoothCornerRadius = .inset4
-    view.backgroundColor = .white
-    view.addTarget(self, action: #selector(layersButtonTapped), for: .touchUpInside)
-
-    view.addSubviews(chevronImageView, layersLabel)
-
-    chevronImageView.snp.makeConstraints { make in
-      make.right.equalToSuperview().offset(-10)
-      make.centerY.equalToSuperview()
-      make.size.equalTo(CGSize(width: 12, height: 12))
-    }
-
-    layersLabel.snp.makeConstraints { make in
-      make.left.top.equalToSuperview().offset(10)
-      make.bottom.equalToSuperview().offset(-10)
-      make.right.equalTo(chevronImageView).offset(-16)
-    }
-
-    return view
+    let button = DisclosureButton()
+    button.action = layersButtonTapped
+    button.setup(withText: "Слои")
+    return button
   }()
 
   private lazy var settingsControlAreaView = {
@@ -136,9 +89,14 @@ final class MusicEditorViewController: UIViewController, MusicEditorInput {
   private var waveformWidthConstraint: ConstraintMakerEditable?
 
   private let viewModel: MusicEditorOutput
+  private let alertPresenter: AlertPresenting
 
-  init(viewModel: MusicEditorOutput) {
+  init(
+    viewModel: MusicEditorOutput,
+    alertPresenter: AlertPresenting
+  ) {
     self.viewModel = viewModel
+    self.alertPresenter = alertPresenter
     super.init(nibName: nil, bundle: nil)
   }
 
@@ -249,8 +207,8 @@ final class MusicEditorViewController: UIViewController, MusicEditorInput {
       }
       audioMixer.play(layer)
       settingsControlAreaView.configure(with: layer)
-      if layersView.isEmpty, isLayersViewHidden {
-        layersButtonTapped()
+      if layersView.isEmpty {
+        layersButton.isOpened = true
       }
       layersView.addLayer(layer)
       showWaveform(for: layer)
@@ -397,14 +355,12 @@ final class MusicEditorViewController: UIViewController, MusicEditorInput {
   }
 
   @objc
-  private func layersButtonTapped() {
+  private func layersButtonTapped(_ isLayersViewHidden: Bool) {
     selectionHaptic()
     let newAlpha: CGFloat = isLayersViewHidden ? 1 : 0
     UIView.animate(withDuration: 0.3) { [weak self] in
       guard let self else { return }
       layersView.alpha = newAlpha
-      chevronImageView.transform = isLayersViewHidden ? CGAffineTransform(rotationAngle: CGFloat.pi) : .identity
-      layersButton.backgroundColor = isLayersViewHidden ? .white : .accentColor
     }
   }
 
@@ -578,7 +534,7 @@ final class MusicEditorViewController: UIViewController, MusicEditorInput {
 
   private func makeLayersView() -> LayersView {
     let view = LayersView(audioController: audioMixer) { [weak self] layer in
-      self?.layersButtonTapped()
+      self?.layersButton.isOpened = true
       self?.settingsControlAreaView.configure(with: layer)
       self?.showWaveform(for: layer)
     } heightDidChange: { [weak self] height in
@@ -594,6 +550,15 @@ final class MusicEditorViewController: UIViewController, MusicEditorInput {
     }
     view.alpha = .zero
     return view
+  }
+
+  private func makeButton(image: UIImage, action: Selector) -> UIButton {
+    let button = UIButton()
+    button.smoothCornerRadius = .inset4
+    button.backgroundColor = .white
+    button.setImage(image, for: .normal)
+    button.addTarget(self, action: action, for: .touchUpInside)
+    return button
   }
 }
 
