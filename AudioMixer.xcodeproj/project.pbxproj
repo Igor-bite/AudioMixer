@@ -43,6 +43,7 @@
 		0A35D85C2AF42B5600E283B5 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0A35D85A2AF42B5600E283B5 /* LaunchScreen.storyboard */; };
 		0A35D86B2AF43BD100E283B5 /* Assets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A35D86A2AF43BD100E283B5 /* Assets.swift */; };
 		0A3E57872B1517A700104E22 /* DisclosureButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A3E57862B1517A700104E22 /* DisclosureButton.swift */; };
+		0A3E57892B151CF400104E22 /* FeedbackGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A3E57882B151CF400104E22 /* FeedbackGenerator.swift */; };
 		0A6573AE2AF7CF2100B8D43F /* WeakHolder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A6573AD2AF7CF2100B8D43F /* WeakHolder.swift */; };
 		0AA94DCC2AF832490087AAC5 /* guitar_5.wav in Resources */ = {isa = PBXBuildFile; fileRef = 0AA94DC32AF832480087AAC5 /* guitar_5.wav */; };
 		0AA94DCD2AF832490087AAC5 /* guitar_6.wav in Resources */ = {isa = PBXBuildFile; fileRef = 0AA94DC42AF832480087AAC5 /* guitar_6.wav */; };
@@ -111,6 +112,7 @@
 		0A35D85D2AF42B5600E283B5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		0A35D86A2AF43BD100E283B5 /* Assets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Assets.swift; sourceTree = "<group>"; };
 		0A3E57862B1517A700104E22 /* DisclosureButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisclosureButton.swift; sourceTree = "<group>"; };
+		0A3E57882B151CF400104E22 /* FeedbackGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedbackGenerator.swift; sourceTree = "<group>"; };
 		0A6573AD2AF7CF2100B8D43F /* WeakHolder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WeakHolder.swift; sourceTree = "<group>"; };
 		0AA94DC32AF832480087AAC5 /* guitar_5.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = guitar_5.wav; sourceTree = "<group>"; };
 		0AA94DC42AF832480087AAC5 /* guitar_6.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = guitar_6.wav; sourceTree = "<group>"; };
@@ -270,6 +272,7 @@
 		0A22C2312AF54BDD00AC88D2 /* Utils */ = {
 			isa = PBXGroup;
 			children = (
+				0A3E57882B151CF400104E22 /* FeedbackGenerator.swift */,
 				0A6573AD2AF7CF2100B8D43F /* WeakHolder.swift */,
 				0A22C2632AF6E8BA00AC88D2 /* AVAudioPCMBuffer+Processing.swift */,
 				0A22C23B2AF5920300AC88D2 /* UIStackViewExtensions.swift */,
@@ -565,6 +568,7 @@
 				0A6573AE2AF7CF2100B8D43F /* WeakHolder.swift in Sources */,
 				0A22C2692AF78E4900AC88D2 /* SettingsControlView.swift in Sources */,
 				0AE1EE942B1357E100363CA8 /* MusicEditorViewModel.swift in Sources */,
+				0A3E57892B151CF400104E22 /* FeedbackGenerator.swift in Sources */,
 				0A22C26F2AF7ABBA00AC88D2 /* Colors.swift in Sources */,
 				0A22C20F2AF443C100AC88D2 /* ScreenAssembly.swift in Sources */,
 				0A22C2382AF5551100AC88D2 /* SelectorButtonItem.swift in Sources */,

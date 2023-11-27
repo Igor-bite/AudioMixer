@@ -6,7 +6,6 @@ import UIKit
 final class MusicEditorViewController: UIViewController, MusicEditorInput {
   override var preferredStatusBarStyle: UIStatusBarStyle { .lightContent }
 
-  private lazy var feedbackGenerator = UISelectionFeedbackGenerator()
   private lazy var audioMixer = AudioMixer()
   private lazy var audioRecorder = MicrophoneAudioRecorder(format: audioMixer.format) { [weak self] in
     self?.showMicPrivacyAlert()
@@ -297,7 +296,7 @@ final class MusicEditorViewController: UIViewController, MusicEditorInput {
 
   @objc
   private func micRecordTapped() {
-    selectionHaptic()
+    FeedbackGenerator.selectionChanged()
     if audioRecorder.isRecording {
       recordMicrophoneButton.backgroundColor = .white
       guard let layer = audioRecorder.stopRecording() else { return }
@@ -324,7 +323,7 @@ final class MusicEditorViewController: UIViewController, MusicEditorInput {
       showNoLayersAlert()
       return
     }
-    selectionHaptic()
+    FeedbackGenerator.selectionChanged()
     shouldRecord.toggle()
     recordSampleButton.backgroundColor = shouldRecord ? .red : .white
     audioMixer.playAll()
@@ -342,7 +341,7 @@ final class MusicEditorViewController: UIViewController, MusicEditorInput {
 
   @objc
   private func playPauseTapped() {
-    selectionHaptic()
+    FeedbackGenerator.selectionChanged()
     if isAllPlaying {
       audioMixer.pauseAll()
       isAllPlaying = false
@@ -354,50 +353,39 @@ final class MusicEditorViewController: UIViewController, MusicEditorInput {
     }
   }
 
-  @objc
   private func layersButtonTapped(_ isLayersViewHidden: Bool) {
-    selectionHaptic()
-    let newAlpha: CGFloat = isLayersViewHidden ? 1 : 0
+    FeedbackGenerator.selectionChanged()
     UIView.animate(withDuration: 0.3) { [weak self] in
       guard let self else { return }
-      layersView.alpha = newAlpha
+      layersView.alpha = isLayersViewHidden ? 1 : 0
     }
   }
 
-  private func selectionHaptic() {
-    feedbackGenerator.prepare()
-    feedbackGenerator.selectionChanged()
-  }
-
   private func showMicPrivacyAlert() {
-    let alertController = UIAlertController(
-      title: "Нет доступа к микрофону",
-      message: "Чтобы использовать запись с микрофона нужно дать разрешение в настройках",
-      preferredStyle: .alert
-    )
-
     let settingsAction = UIAlertAction(title: "Настройки", style: .default) { _ in
       guard let settingsUrl = URL(string: UIApplication.openSettingsURLString) else { return }
       if UIApplication.shared.canOpenURL(settingsUrl) {
         UIApplication.shared.open(settingsUrl) { _ in }
       }
     }
-    alertController.addAction(settingsAction)
     let cancelAction = UIAlertAction(title: "Отменить", style: .default, handler: nil)
-    alertController.addAction(cancelAction)
-    present(alertController, animated: true, completion: nil)
+
+    alertPresenter.showAlert(
+      title: "Нет доступа к микрофону",
+      message: "Чтобы использовать запись с микрофона нужно дать разрешение в настройках",
+      style: .alert,
+      actions: [settingsAction, cancelAction]
+    )
   }
 
   private func showNoLayersAlert() {
-    let alertController = UIAlertController(
+    let okAction = UIAlertAction(title: "Ок", style: .default, handler: nil)
+    alertPresenter.showAlert(
       title: "Пока что записывать нечего",
       message: "Добавьте слои используя кнопки сверху",
-      preferredStyle: .alert
+      style: .alert,
+      actions: [okAction]
     )
-
-    let settingsAction = UIAlertAction(title: "Ок", style: .default, handler: nil)
-    alertController.addAction(settingsAction)
-    present(alertController, animated: true, completion: nil)
   }
 
   private func makeGuitarSelector() -> SelectorButton {
