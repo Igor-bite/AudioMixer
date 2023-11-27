@@ -54,6 +54,26 @@ final class LayerModel: Hashable {
     self.sampleType = sampleType
   }
 
+  convenience init?(
+    sampleType: SampleType,
+    postfix: String
+  ) {
+    let fileName = "\(sampleType.rawValue)_\(postfix)"
+    let layerName = "\(sampleType.layerPrefix) \(postfix)"
+    guard let audioFileUrl = Bundle.main.url(forResource: fileName, withExtension: "wav")
+    else {
+      Logger.log("Audio file was not found")
+      return nil
+    }
+
+    self.init(
+      name: layerName,
+      audioFileUrl: audioFileUrl,
+      isMuted: false,
+      sampleType: sampleType
+    )
+  }
+
   static func == (lhs: LayerModel, rhs: LayerModel) -> Bool {
     lhs.id == rhs.id
   }

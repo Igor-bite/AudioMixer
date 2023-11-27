@@ -18,5 +18,5 @@ protocol MusicEditorOutput {
   func stopRecordingComposition()
 
   func playAll()
-  func stopAll()
+  func pauseAll()
 }

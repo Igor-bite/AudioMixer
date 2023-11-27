@@ -6,22 +6,10 @@ import UIKit
 final class MusicEditorViewController: UIViewController, MusicEditorInput {
   override var preferredStatusBarStyle: UIStatusBarStyle { .lightContent }
 
-  private lazy var audioMixer = AudioMixer()
-  private lazy var audioRecorder = MicrophoneAudioRecorder(format: audioMixer.format) { [weak self] in
-    self?.showMicPrivacyAlert()
-  }
-
-  private var previewLayerPlaying: LayerModel?
-
-  private var shouldRecord = false
-  private var isAllPlaying = false
-
   private lazy var guitarSelector = makeGuitarSelector()
   private lazy var drumsSelector = makeDrumsSelector()
   private lazy var trumpetSelector = makeTrumpetSelector()
   private lazy var layersView = makeLayersView()
-
-  private var layersHeightConstraint: ConstraintMakerEditable?
 
   private lazy var recordMicrophoneButton = makeButton(
     image: Asset.microphone.image,
@@ -81,11 +69,20 @@ final class MusicEditorViewController: UIViewController, MusicEditorInput {
     return view
   }()
 
+  private lazy var audioMixer = AudioMixer()
+  private lazy var audioRecorder = MicrophoneAudioRecorder(format: audioMixer.format) { [weak self] in
+    self?.showMicPrivacyAlert()
+  }
+
+  private var previewLayerPlaying: LayerModel?
+  private var shouldRecord = false
+  private var isAllPlaying = false
   private var settingsChangingLayer: LayerModel?
   private lazy var displayLink = createDisplayLink(.common)
   private var previousProgress: Double = -1
-
+  private var layersHeightConstraint: ConstraintMakerEditable?
   private var waveformWidthConstraint: ConstraintMakerEditable?
+  private let imageDrawer = WaveformImageDrawer()
 
   private let viewModel: MusicEditorOutput
   private let alertPresenter: AlertPresenting
@@ -179,38 +176,35 @@ final class MusicEditorViewController: UIViewController, MusicEditorInput {
     }
   }
 
-  private func selectorTapped(type: SampleType) {
-    sampleSelected(at: .zero, type: type)
-  }
-
   private func playSample(index: Int, type: SampleType) {
-    guard let layer = layerModel(from: index, type: type),
+    guard let layer = LayerModel(sampleType: type, postfix: "\(index + 1)"),
           previewLayerPlaying != layer
     else { return }
+
     if let previewLayerPlaying {
       audioMixer.stopPreview(for: previewLayerPlaying)
     }
+
     previewLayerPlaying = layer
     audioMixer.playPreview(for: layer)
   }
 
-  private let imageDrawer = WaveformImageDrawer()
-
   private func sampleSelected(at index: Int, type: SampleType) {
-    guard let layer = layerModel(from: index, type: type) else { return }
+    guard let layer = LayerModel(sampleType: type, postfix: "\(index + 1)")
+    else { return }
+
     DispatchQueue.main.async { [weak self] in
       guard let self else { return }
       if let previewLayerPlaying {
         audioMixer.stopPreview(for: previewLayerPlaying)
         self.previewLayerPlaying = nil
       }
-      audioMixer.play(layer)
-      settingsControlAreaView.configure(with: layer)
       if layersView.isEmpty {
         layersButton.isOpened = true
       }
       layersView.addLayer(layer)
-      showWaveform(for: layer)
+      audioMixer.play(layer)
+      setLayerForModifications(layer)
     }
   }
 
@@ -277,33 +271,15 @@ final class MusicEditorViewController: UIViewController, MusicEditorInput {
     return displayLink
   }
 
-  private func layerModel(from sampleIndex: Int, type: SampleType) -> LayerModel? {
-    let fileName = "\(type.rawValue)_\(sampleIndex + 1)"
-    let layerName = "\(type.layerPrefix) \(sampleIndex + 1)"
-    guard let audioFileUrl = Bundle.main.url(forResource: fileName, withExtension: "wav")
-    else {
-      Logger.log("Audio file was not found")
-      return nil
-    }
-
-    return LayerModel(
-      name: layerName,
-      audioFileUrl: audioFileUrl,
-      isMuted: false,
-      sampleType: type
-    )
-  }
-
   @objc
   private func micRecordTapped() {
     FeedbackGenerator.selectionChanged()
     if audioRecorder.isRecording {
       recordMicrophoneButton.backgroundColor = .white
       guard let layer = audioRecorder.stopRecording() else { return }
-      showWaveform(for: layer)
       layersView.addLayer(layer)
       audioMixer.play(layer)
-      settingsControlAreaView.configure(with: layer)
+      setLayerForModifications(layer)
     } else {
       let isSuccess = audioRecorder.record()
       if !isSuccess {
@@ -315,6 +291,11 @@ final class MusicEditorViewController: UIViewController, MusicEditorInput {
       audioMixer.pauseAll()
       recordMicrophoneButton.backgroundColor = .red
     }
+  }
+
+  private func setLayerForModifications(_ layer: LayerModel) {
+    showWaveform(for: layer)
+    settingsControlAreaView.configure(with: layer)
   }
 
   @objc
@@ -343,11 +324,11 @@ final class MusicEditorViewController: UIViewController, MusicEditorInput {
   private func playPauseTapped() {
     FeedbackGenerator.selectionChanged()
     if isAllPlaying {
-      audioMixer.pauseAll()
+      viewModel.pauseAll()
       isAllPlaying = false
       playPauseButton.setImage(Asset.play.image, for: .normal)
     } else {
-      audioMixer.playAll()
+      viewModel.playAll()
       isAllPlaying = true
       playPauseButton.setImage(Asset.pause.image, for: .normal)
     }
@@ -407,7 +388,7 @@ final class MusicEditorViewController: UIViewController, MusicEditorInput {
         .init(title: "сэмпл 8"),
       ],
       tapAction: { [weak self] in
-        self?.selectorTapped(type: .guitar)
+        self?.sampleSelected(at: .zero, type: .guitar)
       },
       closeWithoutSelectionAction: { [weak self] in
         guard let self,
@@ -451,7 +432,7 @@ final class MusicEditorViewController: UIViewController, MusicEditorInput {
         .init(title: "сэмпл 8"),
       ],
       tapAction: { [weak self] in
-        self?.selectorTapped(type: .drum)
+        self?.sampleSelected(at: .zero, type: .drum)
       },
       closeWithoutSelectionAction: { [weak self] in
         guard let self,
@@ -495,7 +476,7 @@ final class MusicEditorViewController: UIViewController, MusicEditorInput {
         .init(title: "сэмпл 8"),
       ],
       tapAction: { [weak self] in
-        self?.selectorTapped(type: .trumpet)
+        self?.sampleSelected(at: .zero, type: .trumpet)
       },
       closeWithoutSelectionAction: { [weak self] in
         guard let self,

@@ -29,9 +29,13 @@ final class MusicEditorViewModel: MusicEditorOutput {
 
   func stopRecordingComposition() {}
 
-  func playAll() {}
+  func playAll() {
+    audioMixer.playAll()
+  }
 
-  func stopAll() {}
+  func pauseAll() {
+    audioMixer.pauseAll()
+  }
 }
 
 enum SettingType {
