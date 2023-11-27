@@ -17,152 +17,10 @@ final class MusicEditorViewController: UIViewController, MusicEditorInput {
   private var shouldRecord = false
   private var isAllPlaying = false
 
-  private lazy var guitarSelector = SelectorButton(model: SelectorButton.Model(
-    title: "гитара",
-    image: Asset.guitar.image,
-    closedBackgroundColor: .white,
-    openedBackgroundColor: .accentColor,
-    selectedItemBackgroundColor: .white,
-    itemTextColor: .black,
-    items: [
-      .init(title: "сэмпл 1"),
-      .init(title: "сэмпл 2"),
-      .init(title: "сэмпл 3"),
-      .init(title: "сэмпл 4"),
-      .init(title: "сэмпл 5"),
-      .init(title: "сэмпл 6"),
-      .init(title: "сэмпл 7"),
-      .init(title: "сэмпл 8"),
-    ],
-    tapAction: { [weak self] in
-      self?.selectorTapped(type: .guitar)
-    },
-    closeWithoutSelectionAction: { [weak self] in
-      guard let self,
-            let previewLayerPlaying
-      else { return }
-      audioMixer.stopPreview(for: previewLayerPlaying)
-    },
-    hoverAction: { [weak self] index in
-      guard let index else {
-        guard let self,
-              let previewLayerPlaying
-        else { return }
-        audioMixer.stopPreview(for: previewLayerPlaying)
-        self.previewLayerPlaying = nil
-        return
-      }
-      self?.playSample(index: index, type: .guitar)
-    },
-    selectAction: { [weak self] index in
-      self?.sampleSelected(at: index, type: .guitar)
-    }
-  ))
-
-  private lazy var drumsSelector = SelectorButton(model: SelectorButton.Model(
-    title: "ударные",
-    image: Asset.drums.image,
-    closedBackgroundColor: .white,
-    openedBackgroundColor: .accentColor,
-    selectedItemBackgroundColor: .white,
-    itemTextColor: .black,
-    items: [
-      .init(title: "сэмпл 1"),
-      .init(title: "сэмпл 2"),
-      .init(title: "сэмпл 3"),
-      .init(title: "сэмпл 4"),
-      .init(title: "сэмпл 5"),
-      .init(title: "сэмпл 6"),
-      .init(title: "сэмпл 7"),
-      .init(title: "сэмпл 8"),
-    ],
-    tapAction: { [weak self] in
-      self?.selectorTapped(type: .drum)
-    },
-    closeWithoutSelectionAction: { [weak self] in
-      guard let self,
-            let previewLayerPlaying
-      else { return }
-      audioMixer.stopPreview(for: previewLayerPlaying)
-    },
-    hoverAction: { [weak self] index in
-      guard let index else {
-        guard let self,
-              let previewLayerPlaying
-        else { return }
-        audioMixer.stopPreview(for: previewLayerPlaying)
-        self.previewLayerPlaying = nil
-        return
-      }
-      self?.playSample(index: index, type: .drum)
-    },
-    selectAction: { [weak self] index in
-      self?.sampleSelected(at: index, type: .drum)
-    }
-  ))
-
-  private lazy var trumpetSelector = SelectorButton(model: SelectorButton.Model(
-    title: "духовые",
-    image: Asset.trumpet.image,
-    closedBackgroundColor: .white,
-    openedBackgroundColor: .accentColor,
-    selectedItemBackgroundColor: .white,
-    itemTextColor: .black,
-    items: [
-      .init(title: "сэмпл 1"),
-      .init(title: "сэмпл 2"),
-      .init(title: "сэмпл 3"),
-      .init(title: "сэмпл 4"),
-      .init(title: "сэмпл 5"),
-      .init(title: "сэмпл 6"),
-      .init(title: "сэмпл 7"),
-      .init(title: "сэмпл 8"),
-    ],
-    tapAction: { [weak self] in
-      self?.selectorTapped(type: .trumpet)
-    },
-    closeWithoutSelectionAction: { [weak self] in
-      guard let self,
-            let previewLayerPlaying
-      else { return }
-      audioMixer.stopPreview(for: previewLayerPlaying)
-    },
-    hoverAction: { [weak self] index in
-      guard let index else {
-        guard let self,
-              let previewLayerPlaying
-        else { return }
-        audioMixer.stopPreview(for: previewLayerPlaying)
-        self.previewLayerPlaying = nil
-        return
-      }
-      self?.playSample(index: index, type: .trumpet)
-    },
-    selectAction: { [weak self] index in
-      self?.sampleSelected(at: index, type: .trumpet)
-    }
-  ))
-
-  private lazy var layersView = {
-    let view = LayersView(audioController: audioMixer) { [weak self] layer in
-      self?.layersButtonTapped()
-      self?.settingsControlAreaView.configure(with: layer)
-      self?.showWaveform(for: layer)
-    } heightDidChange: { [weak self] height in
-      self?.layersHeightConstraint?.constraint.update(offset: height)
-      UIView.animate(withDuration: 0.3) { [weak self] in
-        self?.view.layoutSubviews()
-      }
-    } didDeleteLayer: { [weak self] layer in
-      if self?.settingsChangingLayer == layer {
-        self?.hideWaveform()
-        self?.settingsControlAreaView.configure(with: nil)
-        self?.audioMixer.stop(layer)
-      }
-    }
-    view.alpha = .zero
-    return view
-  }()
+  private lazy var guitarSelector = makeGuitarSelector()
+  private lazy var drumsSelector = makeDrumsSelector()
+  private lazy var trumpetSelector = makeTrumpetSelector()
+  private lazy var layersView = makeLayersView()
 
   private var isLayersViewHidden: Bool {
     layersView.alpha == .zero
@@ -584,6 +442,158 @@ final class MusicEditorViewController: UIViewController, MusicEditorInput {
     let settingsAction = UIAlertAction(title: "Ок", style: .default, handler: nil)
     alertController.addAction(settingsAction)
     present(alertController, animated: true, completion: nil)
+  }
+
+  private func makeGuitarSelector() -> SelectorButton {
+    SelectorButton(model: SelectorButton.Model(
+      title: "гитара",
+      image: Asset.guitar.image,
+      closedBackgroundColor: .white,
+      openedBackgroundColor: .accentColor,
+      selectedItemBackgroundColor: .white,
+      itemTextColor: .black,
+      items: [
+        .init(title: "сэмпл 1"),
+        .init(title: "сэмпл 2"),
+        .init(title: "сэмпл 3"),
+        .init(title: "сэмпл 4"),
+        .init(title: "сэмпл 5"),
+        .init(title: "сэмпл 6"),
+        .init(title: "сэмпл 7"),
+        .init(title: "сэмпл 8"),
+      ],
+      tapAction: { [weak self] in
+        self?.selectorTapped(type: .guitar)
+      },
+      closeWithoutSelectionAction: { [weak self] in
+        guard let self,
+              let previewLayerPlaying
+        else { return }
+        audioMixer.stopPreview(for: previewLayerPlaying)
+      },
+      hoverAction: { [weak self] index in
+        guard let index else {
+          guard let self,
+                let previewLayerPlaying
+          else { return }
+          audioMixer.stopPreview(for: previewLayerPlaying)
+          self.previewLayerPlaying = nil
+          return
+        }
+        self?.playSample(index: index, type: .guitar)
+      },
+      selectAction: { [weak self] index in
+        self?.sampleSelected(at: index, type: .guitar)
+      }
+    ))
+  }
+
+  private func makeDrumsSelector() -> SelectorButton {
+    SelectorButton(model: SelectorButton.Model(
+      title: "ударные",
+      image: Asset.drums.image,
+      closedBackgroundColor: .white,
+      openedBackgroundColor: .accentColor,
+      selectedItemBackgroundColor: .white,
+      itemTextColor: .black,
+      items: [
+        .init(title: "сэмпл 1"),
+        .init(title: "сэмпл 2"),
+        .init(title: "сэмпл 3"),
+        .init(title: "сэмпл 4"),
+        .init(title: "сэмпл 5"),
+        .init(title: "сэмпл 6"),
+        .init(title: "сэмпл 7"),
+        .init(title: "сэмпл 8"),
+      ],
+      tapAction: { [weak self] in
+        self?.selectorTapped(type: .drum)
+      },
+      closeWithoutSelectionAction: { [weak self] in
+        guard let self,
+              let previewLayerPlaying
+        else { return }
+        audioMixer.stopPreview(for: previewLayerPlaying)
+      },
+      hoverAction: { [weak self] index in
+        guard let index else {
+          guard let self,
+                let previewLayerPlaying
+          else { return }
+          audioMixer.stopPreview(for: previewLayerPlaying)
+          self.previewLayerPlaying = nil
+          return
+        }
+        self?.playSample(index: index, type: .drum)
+      },
+      selectAction: { [weak self] index in
+        self?.sampleSelected(at: index, type: .drum)
+      }
+    ))
+  }
+
+  private func makeTrumpetSelector() -> SelectorButton {
+    SelectorButton(model: SelectorButton.Model(
+      title: "духовые",
+      image: Asset.trumpet.image,
+      closedBackgroundColor: .white,
+      openedBackgroundColor: .accentColor,
+      selectedItemBackgroundColor: .white,
+      itemTextColor: .black,
+      items: [
+        .init(title: "сэмпл 1"),
+        .init(title: "сэмпл 2"),
+        .init(title: "сэмпл 3"),
+        .init(title: "сэмпл 4"),
+        .init(title: "сэмпл 5"),
+        .init(title: "сэмпл 6"),
+        .init(title: "сэмпл 7"),
+        .init(title: "сэмпл 8"),
+      ],
+      tapAction: { [weak self] in
+        self?.selectorTapped(type: .trumpet)
+      },
+      closeWithoutSelectionAction: { [weak self] in
+        guard let self,
+              let previewLayerPlaying
+        else { return }
+        audioMixer.stopPreview(for: previewLayerPlaying)
+      },
+      hoverAction: { [weak self] index in
+        guard let index else {
+          guard let self,
+                let previewLayerPlaying
+          else { return }
+          audioMixer.stopPreview(for: previewLayerPlaying)
+          self.previewLayerPlaying = nil
+          return
+        }
+        self?.playSample(index: index, type: .trumpet)
+      },
+      selectAction: { [weak self] index in
+        self?.sampleSelected(at: index, type: .trumpet)
+      }
+    ))
+  }
+
+  private func makeLayersView() -> LayersView {
+    let view = LayersView(audioController: audioMixer) { [weak self] layer in
+      self?.layersButtonTapped()
+      self?.settingsControlAreaView.configure(with: layer)
+      self?.showWaveform(for: layer)
+    } heightDidChange: { [weak self] height in
+      self?.layersHeightConstraint?.constraint.update(offset: height)
+      UIView.animate(withDuration: 0.3) { [weak self] in
+        self?.view.layoutSubviews()
+      }
+    } didDeleteLayer: { [weak self] layer in
+      self?.audioMixer.stop(layer)
+      guard self?.settingsChangingLayer == layer else { return }
+      self?.hideWaveform()
+      self?.settingsControlAreaView.configure(with: nil)
+    }
+    view.alpha = .zero
+    return view
   }
 }
 
