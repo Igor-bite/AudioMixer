@@ -41,33 +41,13 @@ final class MusicEditorViewController: UIViewController, MusicEditorInput {
     return view
   }()
 
-  private lazy var waveFormView = {
-    let view = WaveformImageView(frame: .zero)
-    view.imageDidSet = { [weak self] image in
-      view.frame.size = image.size
-      self?.waveFormScrollView.contentSize = image.size
-    }
-    return view
-  }()
-
-  private lazy var waveFormScrollView = {
-    let view = UIScrollView()
-    view.contentInset = Constants.waveformScrollInsets
-    view.showsHorizontalScrollIndicator = false
-    view.showsVerticalScrollIndicator = false
-    return view
-  }()
-
-  private lazy var audioMixer = AudioMixer()
+  private lazy var waveformScrollingView = WaveformScrollingView(
+    audioMixer: viewModel.audioController
+  )
 
   private var bag = Set<AnyCancellable>()
-  private var shouldRecord = false
-  private lazy var displayLink = createDisplayLink(.common)
-  private var previousProgress: Double = -1
   private var layersHeightConstraint: ConstraintMakerEditable?
-  private var waveformWidthConstraint: ConstraintMakerEditable?
 
-  private let waveformImageDrawer = WaveformImageDrawer()
   private let viewModel: MusicEditorOutput
   private let alertPresenter: AlertPresenting
 
@@ -96,9 +76,9 @@ final class MusicEditorViewController: UIViewController, MusicEditorInput {
   func setLayerForModifications(_ layer: LayerModel?) {
     settingsControlAreaView.configure(with: layer)
     if let layer {
-      showWaveform(for: layer)
+      waveformScrollingView.showWaveform(for: layer)
     } else {
-      hideWaveform()
+      waveformScrollingView.hideWaveform()
     }
   }
 
@@ -131,14 +111,13 @@ final class MusicEditorViewController: UIViewController, MusicEditorInput {
     view.addSubviews(
       settingsControlAreaView,
       stack,
-      waveFormScrollView,
+      waveformScrollingView,
       layersView,
       recordMicrophoneButton,
       recordSampleButton,
       playPauseButton,
       layersButton
     )
-    waveFormScrollView.addSubview(waveFormView)
 
     stack.snp.makeConstraints { make in
       make.top.equalTo(view.safeAreaLayoutGuide)
@@ -155,14 +134,14 @@ final class MusicEditorViewController: UIViewController, MusicEditorInput {
       make.bottom.lessThanOrEqualTo(layersView.snp.bottom).priority(.high)
     }
 
-    waveFormScrollView.snp.makeConstraints { make in
+    waveformScrollingView.snp.makeConstraints { make in
       make.leading.trailing.equalToSuperview()
       make.bottom.equalTo(layersButton.snp.top).offset(-32)
       make.height.equalTo(Constants.waveformHeight)
     }
 
     layersView.snp.makeConstraints { make in
-      make.bottom.equalTo(waveFormScrollView.snp.top).offset(-12)
+      make.bottom.equalTo(waveformScrollingView.snp.top).offset(-12)
       make.leading.trailing.equalToSuperview()
       layersHeightConstraint = make.height.equalTo(0)
     }
@@ -209,74 +188,12 @@ final class MusicEditorViewController: UIViewController, MusicEditorInput {
 
     DispatchQueue.main.async { [weak self] in
       guard let self else { return }
-      viewModel.stopPreview()
-      viewModel.addLayer(layer)
       if layersView.isEmpty {
         layersButton.isOpened = true
       }
+      viewModel.stopPreview()
+      viewModel.addLayer(layer)
     }
-  }
-
-  private func showWaveform(for layer: LayerModel) {
-    previousProgress = -1
-    let displayLink = displayLink
-    displayLink.isPaused = false
-    let waveformWidth = layer.waveformWidth
-    let size = CGSize(width: waveformWidth, height: Constants.waveformHeight)
-    waveFormView.frame.size = size
-    waveFormView.configuration = Waveform.Configuration(
-      size: size,
-      backgroundColor: .clear,
-      style: .striped(
-        Waveform.Style.StripeConfig(
-          color: .white,
-          width: 2,
-          spacing: 2,
-          lineCap: .round
-        )
-      ),
-      verticalScalingFactor: Constants.koeff,
-      shouldAntialias: true
-    )
-    waveFormView.reset()
-    waveFormView.waveformAudioURL = layer.audioFileUrl
-  }
-
-  private func hideWaveform() {
-    waveFormView.reset()
-    displayLink.isPaused = true
-  }
-
-  @objc
-  private func updateWaveformProgress() {
-    guard let settingsChangingLayer = viewModel.settingsChangingLayer,
-          audioMixer.isLayerPlaying(settingsChangingLayer)
-    else { return }
-    let duration = audioMixer.playedTime(settingsChangingLayer)
-    let progress = duration / settingsChangingLayer.duration
-    guard previousProgress != progress else { return }
-    previousProgress = progress
-    waveFormView.progress = progress
-    let contentSize = waveFormScrollView.contentSize
-    guard contentSize.width > UIScreen.main.bounds.width - 32 else {
-      waveFormScrollView.contentInset.left = UIScreen.main.bounds.width / 2 - contentSize.width / 2
-      return
-    }
-    waveFormScrollView.contentInset.left = 16
-    let offset = contentSize.width * progress
-    waveFormScrollView.contentOffset.x = max(-16, offset - UIScreen.main.bounds.width / 2)
-  }
-
-  private func createDisplayLink(_ mode: RunLoop.Mode) -> CADisplayLink {
-    let displayLink = CADisplayLink(target: self, selector: #selector(updateWaveformProgress))
-    displayLink.preferredFrameRateRange = CAFrameRateRange(
-      minimum: 60,
-      maximum: Float(UIScreen.main.maximumFramesPerSecond),
-      preferred: Float(UIScreen.main.maximumFramesPerSecond)
-    )
-    displayLink.add(to: .current, forMode: mode)
-    displayLink.isPaused = true
-    return displayLink
   }
 
   @objc
@@ -467,10 +384,4 @@ final class MusicEditorViewController: UIViewController, MusicEditorInput {
 fileprivate enum Constants {
   static let waveformHeight = 48 * koeff
   static let koeff = 0.8
-  static let waveformScrollInsets = UIEdgeInsets(
-    top: .zero,
-    left: 16,
-    bottom: .zero,
-    right: 16
-  )
 }

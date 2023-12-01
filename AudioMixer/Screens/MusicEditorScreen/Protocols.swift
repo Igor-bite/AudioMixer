@@ -15,7 +15,7 @@ protocol MusicEditorInput: AnyObject {
 protocol MusicEditorOutput {
   var settingsChangingLayer: LayerModel? { get }
   var isAllPlaying: Bool { get }
-  var audioController: AudioControlling { get }
+  var audioController: AudioMixer { get }
   var isCompositionRecording: Bool { get }
   var isRecordingVoice: CurrentValueSubject<Bool, Never> { get }
 

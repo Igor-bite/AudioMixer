@@ -45,7 +45,7 @@ final class LayerCell: UICollectionViewCell {
   private var progressWidthConstraint: ConstraintMakerEditable?
 
   private var layerModel: LayerModel?
-  private var deleteAction: Action?
+  private var deleteAction: ((LayerModel) -> Void)?
   private var audioController: AudioControlling?
 
   override init(frame: CGRect) {
@@ -61,7 +61,7 @@ final class LayerCell: UICollectionViewCell {
   func configure(
     with model: LayerModel,
     audioController: AudioControlling,
-    deleteAction: @escaping Action
+    deleteAction: @escaping (LayerModel) -> Void
   ) {
     self.layerModel = model
     self.audioController = audioController
@@ -87,7 +87,7 @@ final class LayerCell: UICollectionViewCell {
   private func deleteTapped() {
     guard let layerModel else { return }
     audioController?.stop(layerModel, shouldRemove: true)
-    deleteAction?()
+    deleteAction?(layerModel)
   }
 
   @objc

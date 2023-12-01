@@ -45,6 +45,7 @@
 		0A3E57872B1517A700104E22 /* DisclosureButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A3E57862B1517A700104E22 /* DisclosureButton.swift */; };
 		0A3E57892B151CF400104E22 /* FeedbackGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A3E57882B151CF400104E22 /* FeedbackGenerator.swift */; };
 		0A6573AE2AF7CF2100B8D43F /* WeakHolder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A6573AD2AF7CF2100B8D43F /* WeakHolder.swift */; };
+		0A72504C2B1A048200E83C32 /* WaveformScrollingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A72504B2B1A048200E83C32 /* WaveformScrollingView.swift */; };
 		0AA94DCC2AF832490087AAC5 /* guitar_5.wav in Resources */ = {isa = PBXBuildFile; fileRef = 0AA94DC32AF832480087AAC5 /* guitar_5.wav */; };
 		0AA94DCD2AF832490087AAC5 /* guitar_6.wav in Resources */ = {isa = PBXBuildFile; fileRef = 0AA94DC42AF832480087AAC5 /* guitar_6.wav */; };
 		0AA94DCE2AF832490087AAC5 /* guitar_7.wav in Resources */ = {isa = PBXBuildFile; fileRef = 0AA94DC52AF832480087AAC5 /* guitar_7.wav */; };
@@ -114,6 +115,7 @@
 		0A3E57862B1517A700104E22 /* DisclosureButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisclosureButton.swift; sourceTree = "<group>"; };
 		0A3E57882B151CF400104E22 /* FeedbackGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedbackGenerator.swift; sourceTree = "<group>"; };
 		0A6573AD2AF7CF2100B8D43F /* WeakHolder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WeakHolder.swift; sourceTree = "<group>"; };
+		0A72504B2B1A048200E83C32 /* WaveformScrollingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WaveformScrollingView.swift; sourceTree = "<group>"; };
 		0AA94DC32AF832480087AAC5 /* guitar_5.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = guitar_5.wav; sourceTree = "<group>"; };
 		0AA94DC42AF832480087AAC5 /* guitar_6.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = guitar_6.wav; sourceTree = "<group>"; };
 		0AA94DC52AF832480087AAC5 /* guitar_7.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = guitar_7.wav; sourceTree = "<group>"; };
@@ -207,6 +209,7 @@
 				0A22C26E2AF7ABBA00AC88D2 /* Colors.swift */,
 				0A0DF4D92AF8080E00BEFA70 /* Waveform */,
 				0A3E57862B1517A700104E22 /* DisclosureButton.swift */,
+				0A72504B2B1A048200E83C32 /* WaveformScrollingView.swift */,
 			);
 			path = UIComponents;
 			sourceTree = "<group>";
@@ -573,6 +576,7 @@
 				0A22C20F2AF443C100AC88D2 /* ScreenAssembly.swift in Sources */,
 				0A22C2382AF5551100AC88D2 /* SelectorButtonItem.swift in Sources */,
 				0A22C2712AF7B53200AC88D2 /* clamp.swift in Sources */,
+				0A72504C2B1A048200E83C32 /* WaveformScrollingView.swift in Sources */,
 				0A22C2352AF550EA00AC88D2 /* Insets.swift in Sources */,
 				0A3E57872B1517A700104E22 /* DisclosureButton.swift in Sources */,
 				0A22C2662AF6FAF500AC88D2 /* GradientView.swift in Sources */,

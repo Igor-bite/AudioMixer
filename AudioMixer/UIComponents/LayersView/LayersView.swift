@@ -110,9 +110,12 @@ final class LayersView: UIView {
       for: indexPath
     ) as? LayerCell
     else { return UICollectionViewCell() }
-    cell.configure(with: layer, audioController: audioController) { [weak self] in
-      self?.layers.remove(at: indexPath.item)
-      self?.updateCollectionView()
+    cell.configure(
+      with: layer,
+      audioController: audioController
+    ) { [weak self] layer in
+      guard let index = self?.layers.firstIndex(of: layer) else { return }
+      self?.layers.remove(at: index)
       self?.didDeleteLayer(layer)
     }
     return cell

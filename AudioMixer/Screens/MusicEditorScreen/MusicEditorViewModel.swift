@@ -17,7 +17,7 @@ final class MusicEditorViewModel: MusicEditorOutput {
   var isCompositionRecording = false
   var isRecordingVoice = CurrentValueSubject<Bool, Never>(false)
 
-  var audioController: AudioControlling {
+  var audioController: AudioMixer {
     audioMixer
   }
 
