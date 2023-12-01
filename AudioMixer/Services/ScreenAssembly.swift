@@ -15,18 +15,24 @@ final class ScreenAssembly {
     alertPresenter: alertPresenter
   )
 
-  func makeMusicEditor() -> UIViewController {
-    let viewModel = MusicEditorViewModel(
+  lazy var projectsSaver: ProjectsSaving = ProjectsSaver()
+
+  func makeMusicEditor(for project: ProjectModel) -> MusicEditorCoordinator {
+    MusicEditorCoordinator(
+      project: project,
+      alertPresenter: alertPresenter,
       audioMixer: audioMixer,
-      audioRecorder: microphoneRecorder
+      microphoneRecorder: microphoneRecorder,
+      screenAssembly: self,
+      navigationController: rootNavigationController
     )
+  }
 
-    let viewController = MusicEditorViewController(
-      viewModel: viewModel,
-      alertPresenter: alertPresenter
+  func makeProjectsList() -> ProjectsListViewCoordinator {
+    ProjectsListViewCoordinator(
+      projectsSaver: projectsSaver,
+      screenAssembly: self,
+      navigationController: rootNavigationController
     )
-    viewModel.view = viewController
-
-    return viewController
   }
 }

@@ -71,6 +71,12 @@ final class MusicEditorViewController: UIViewController, MusicEditorInput {
     setupUI()
 
     navigationController?.navigationBar.isHidden = true
+    view.backgroundColor = .black
+  }
+
+  override func viewDidAppear(_ animated: Bool) {
+    super.viewDidAppear(animated)
+    viewModel.viewDidAppear()
   }
 
   func setLayerForModifications(_ layer: LayerModel?) {
@@ -84,6 +90,12 @@ final class MusicEditorViewController: UIViewController, MusicEditorInput {
 
   func addLayerToLayersView(_ layer: LayerModel) {
     layersView.addLayer(layer)
+  }
+
+  func configureWithLayers(_ layers: [LayerModel], shouldOpenLayers: Bool) {
+    layersView.configure(with: layers)
+    guard shouldOpenLayers else { return }
+    layersButton.isOpened = true
   }
 
   func showSharing(for file: URL) {

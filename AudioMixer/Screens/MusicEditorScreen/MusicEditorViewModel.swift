@@ -8,6 +8,7 @@ final class MusicEditorViewModel: MusicEditorOutput {
   weak var view: MusicEditorInput?
   private let audioMixer: AudioMixer
   private let audioRecorder: MicrophoneAudioRecorder
+  private let project: ProjectModel
 
   private var previewLayerPlaying: LayerModel?
   private var recordCompositionWorkItem: DispatchWorkItem?
@@ -22,11 +23,20 @@ final class MusicEditorViewModel: MusicEditorOutput {
   }
 
   init(
+    project: ProjectModel,
     audioMixer: AudioMixer,
     audioRecorder: MicrophoneAudioRecorder
   ) {
+    self.project = project
     self.audioMixer = audioMixer
     self.audioRecorder = audioRecorder
+  }
+
+  func viewDidAppear() {
+    view?.configureWithLayers(
+      project.layers,
+      shouldOpenLayers: !project.layers.isEmpty
+    )
   }
 
   func playPreview(for layer: LayerModel) {

@@ -15,10 +15,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     guard let window = window else { return false }
 
     let initialController = screenAssembly.rootNavigationController
-    initialController.setViewControllers(
-      [screenAssembly.makeMusicEditor()],
-      animated: false
-    )
+    let projectsList = screenAssembly.makeProjectsList()
+    projectsList.start()
 
     window.rootViewController = initialController
     window.makeKeyAndVisible()

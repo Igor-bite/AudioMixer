@@ -46,6 +46,12 @@
 		0A3E57892B151CF400104E22 /* FeedbackGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A3E57882B151CF400104E22 /* FeedbackGenerator.swift */; };
 		0A6573AE2AF7CF2100B8D43F /* WeakHolder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A6573AD2AF7CF2100B8D43F /* WeakHolder.swift */; };
 		0A72504C2B1A048200E83C32 /* WaveformScrollingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A72504B2B1A048200E83C32 /* WaveformScrollingView.swift */; };
+		0A72504F2B1A1CF900E83C32 /* ProjectsListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A72504E2B1A1CF900E83C32 /* ProjectsListViewController.swift */; };
+		0A7250512B1A1CFE00E83C32 /* ProjectsListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A7250502B1A1CFE00E83C32 /* ProjectsListViewModel.swift */; };
+		0A7250532B1A1D2400E83C32 /* ProjectModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A7250522B1A1D2400E83C32 /* ProjectModel.swift */; };
+		0A7250572B1A23FD00E83C32 /* MusicEditorCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A7250562B1A23FD00E83C32 /* MusicEditorCoordinator.swift */; };
+		0A7250592B1A251E00E83C32 /* ProjectsListViewCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A7250582B1A251E00E83C32 /* ProjectsListViewCoordinator.swift */; };
+		0A72505B2B1A2F8200E83C32 /* ProjectsSaver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A72505A2B1A2F8200E83C32 /* ProjectsSaver.swift */; };
 		0AA94DCC2AF832490087AAC5 /* guitar_5.wav in Resources */ = {isa = PBXBuildFile; fileRef = 0AA94DC32AF832480087AAC5 /* guitar_5.wav */; };
 		0AA94DCD2AF832490087AAC5 /* guitar_6.wav in Resources */ = {isa = PBXBuildFile; fileRef = 0AA94DC42AF832480087AAC5 /* guitar_6.wav */; };
 		0AA94DCE2AF832490087AAC5 /* guitar_7.wav in Resources */ = {isa = PBXBuildFile; fileRef = 0AA94DC52AF832480087AAC5 /* guitar_7.wav */; };
@@ -116,6 +122,12 @@
 		0A3E57882B151CF400104E22 /* FeedbackGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedbackGenerator.swift; sourceTree = "<group>"; };
 		0A6573AD2AF7CF2100B8D43F /* WeakHolder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WeakHolder.swift; sourceTree = "<group>"; };
 		0A72504B2B1A048200E83C32 /* WaveformScrollingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WaveformScrollingView.swift; sourceTree = "<group>"; };
+		0A72504E2B1A1CF900E83C32 /* ProjectsListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectsListViewController.swift; sourceTree = "<group>"; };
+		0A7250502B1A1CFE00E83C32 /* ProjectsListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectsListViewModel.swift; sourceTree = "<group>"; };
+		0A7250522B1A1D2400E83C32 /* ProjectModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectModel.swift; sourceTree = "<group>"; };
+		0A7250562B1A23FD00E83C32 /* MusicEditorCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MusicEditorCoordinator.swift; sourceTree = "<group>"; };
+		0A7250582B1A251E00E83C32 /* ProjectsListViewCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectsListViewCoordinator.swift; sourceTree = "<group>"; };
+		0A72505A2B1A2F8200E83C32 /* ProjectsSaver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectsSaver.swift; sourceTree = "<group>"; };
 		0AA94DC32AF832480087AAC5 /* guitar_5.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = guitar_5.wav; sourceTree = "<group>"; };
 		0AA94DC42AF832480087AAC5 /* guitar_6.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = guitar_6.wav; sourceTree = "<group>"; };
 		0AA94DC52AF832480087AAC5 /* guitar_7.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = guitar_7.wav; sourceTree = "<group>"; };
@@ -194,6 +206,7 @@
 				0AE1EE992B138A8A00363CA8 /* AlertPresenter.swift */,
 				0AE1EE982B138A7800363CA8 /* Audio */,
 				0AE1EE972B138A6D00363CA8 /* Logging */,
+				0A72505A2B1A2F8200E83C32 /* ProjectsSaver.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -217,6 +230,7 @@
 		0A22C1FD2AF4419300AC88D2 /* Screens */ = {
 			isa = PBXGroup;
 			children = (
+				0A72504D2B1A1CE700E83C32 /* ProjectsList */,
 				0A22C1FE2AF4419B00AC88D2 /* MusicEditorScreen */,
 			);
 			path = Screens;
@@ -228,6 +242,7 @@
 				0A22C22A2AF5496D00AC88D2 /* MusicEditorViewController.swift */,
 				0AE1EE932B1357E100363CA8 /* MusicEditorViewModel.swift */,
 				0AE1EE9E2B13946000363CA8 /* Protocols.swift */,
+				0A7250562B1A23FD00E83C32 /* MusicEditorCoordinator.swift */,
 			);
 			path = MusicEditorScreen;
 			sourceTree = "<group>";
@@ -379,6 +394,17 @@
 				0A35D86A2AF43BD100E283B5 /* Assets.swift */,
 			);
 			path = Generated;
+			sourceTree = "<group>";
+		};
+		0A72504D2B1A1CE700E83C32 /* ProjectsList */ = {
+			isa = PBXGroup;
+			children = (
+				0A72504E2B1A1CF900E83C32 /* ProjectsListViewController.swift */,
+				0A7250502B1A1CFE00E83C32 /* ProjectsListViewModel.swift */,
+				0A7250522B1A1D2400E83C32 /* ProjectModel.swift */,
+				0A7250582B1A251E00E83C32 /* ProjectsListViewCoordinator.swift */,
+			);
+			path = ProjectsList;
 			sourceTree = "<group>";
 		};
 		0AE1EE972B138A6D00363CA8 /* Logging */ = {
@@ -543,14 +569,17 @@
 			files = (
 				0A22C23A2AF55A7600AC88D2 /* Action.swift in Sources */,
 				0A0DF4D82AF7E5E100BEFA70 /* UIScreenExtensions.swift in Sources */,
+				0A72505B2B1A2F8200E83C32 /* ProjectsSaver.swift in Sources */,
 				0A22C24F2AF5B21300AC88D2 /* AudioMixer.swift in Sources */,
 				0AE1EE9F2B13946000363CA8 /* Protocols.swift in Sources */,
 				0A22C2332AF54C8400AC88D2 /* UIViewExtensions.swift in Sources */,
 				0A22C24B2AF59C7B00AC88D2 /* LayerModel.swift in Sources */,
 				0A0DF4F22AF8083C00BEFA70 /* LinearWaveformRenderer.swift in Sources */,
 				0A22C2642AF6E8BB00AC88D2 /* AVAudioPCMBuffer+Processing.swift in Sources */,
+				0A72504F2B1A1CF900E83C32 /* ProjectsListViewController.swift in Sources */,
 				0A22C2162AF446D500AC88D2 /* Logger.swift in Sources */,
 				0A35D8502AF42B5400E283B5 /* AppDelegate.swift in Sources */,
+				0A7250592B1A251E00E83C32 /* ProjectsListViewCoordinator.swift in Sources */,
 				0A0DF4F92AF8083C00BEFA70 /* WaveformLiveView.swift in Sources */,
 				0A0DF4FA2AF8083C00BEFA70 /* WaveformImageView.swift in Sources */,
 				0A22C23E2AF5956300AC88D2 /* ArrayExtensions.swift in Sources */,
@@ -563,10 +592,13 @@
 				0A0DF4F02AF8083C00BEFA70 /* WaveformRenderer.swift in Sources */,
 				0A35D86B2AF43BD100E283B5 /* Assets.swift in Sources */,
 				0A0DF4F72AF8083C00BEFA70 /* WaveformAnalyzer.swift in Sources */,
+				0A7250532B1A1D2400E83C32 /* ProjectModel.swift in Sources */,
 				0A22C26D2AF79F9500AC88D2 /* CGFloat+Normalization.swift in Sources */,
 				0A22C22B2AF5496D00AC88D2 /* MusicEditorViewController.swift in Sources */,
 				0AE1EE9A2B138A8A00363CA8 /* AlertPresenter.swift in Sources */,
 				0A22C23C2AF5920300AC88D2 /* UIStackViewExtensions.swift in Sources */,
+				0A7250512B1A1CFE00E83C32 /* ProjectsListViewModel.swift in Sources */,
+				0A7250572B1A23FD00E83C32 /* MusicEditorCoordinator.swift in Sources */,
 				0A0DF4F42AF8083C00BEFA70 /* WaveformImageDrawer.swift in Sources */,
 				0A6573AE2AF7CF2100B8D43F /* WeakHolder.swift in Sources */,
 				0A22C2692AF78E4900AC88D2 /* SettingsControlView.swift in Sources */,

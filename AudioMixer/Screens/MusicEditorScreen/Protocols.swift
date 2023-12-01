@@ -8,6 +8,7 @@ import Foundation
 protocol MusicEditorInput: AnyObject {
   func setLayerForModifications(_ layer: LayerModel?)
   func addLayerToLayersView(_ layer: LayerModel)
+  func configureWithLayers(_ layers: [LayerModel], shouldOpenLayers: Bool)
   func showSharing(for file: URL)
 }
 
@@ -18,6 +19,8 @@ protocol MusicEditorOutput {
   var audioController: AudioMixer { get }
   var isCompositionRecording: Bool { get }
   var isRecordingVoice: CurrentValueSubject<Bool, Never> { get }
+
+  func viewDidAppear()
 
   func playPreview(for layer: LayerModel)
   func stopPreview()
