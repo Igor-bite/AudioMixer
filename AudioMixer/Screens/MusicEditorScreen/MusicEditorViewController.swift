@@ -34,21 +34,14 @@ final class MusicEditorViewController: UIViewController, MusicEditorInput {
   }()
 
   private lazy var settingsControlAreaView = {
-    let view = SettingsControlView(audioController: audioMixer)
+    let view = SettingsControlView(audioController: viewModel.audioController)
     view.layer.borderColor = UIColor.gray.cgColor
     view.layer.borderWidth = UIScreen.onePixel
     return view
   }()
 
   private lazy var waveFormView = {
-    let view = WaveformImageView(
-      frame: CGRect(
-        x: .zero,
-        y: .zero,
-        width: .zero,
-        height: 60
-      )
-    )
+    let view = WaveformImageView(frame: .zero)
     view.imageDidSet = { [weak self] image in
       view.frame.size = image.size
       self?.waveFormScrollView.contentSize = image.size
@@ -58,12 +51,7 @@ final class MusicEditorViewController: UIViewController, MusicEditorInput {
 
   private lazy var waveFormScrollView = {
     let view = UIScrollView()
-    view.contentInset = UIEdgeInsets(
-      top: .zero,
-      left: 16,
-      bottom: .zero,
-      right: 16
-    )
+    view.contentInset = Constants.waveformScrollInsets
     view.showsHorizontalScrollIndicator = false
     view.showsVerticalScrollIndicator = false
     return view
@@ -71,19 +59,17 @@ final class MusicEditorViewController: UIViewController, MusicEditorInput {
 
   private lazy var audioMixer = AudioMixer()
   private lazy var audioRecorder = MicrophoneAudioRecorder(
-    format: audioMixer.format,
+    format: viewModel.audioRecordingFormat,
     alertPresenter: alertPresenter
   )
 
   private var shouldRecord = false
-  private var isAllPlaying = false
-  private var settingsChangingLayer: LayerModel?
   private lazy var displayLink = createDisplayLink(.common)
   private var previousProgress: Double = -1
   private var layersHeightConstraint: ConstraintMakerEditable?
   private var waveformWidthConstraint: ConstraintMakerEditable?
-  private let imageDrawer = WaveformImageDrawer()
 
+  private let waveformImageDrawer = WaveformImageDrawer()
   private let viewModel: MusicEditorOutput
   private let alertPresenter: AlertPresenting
 
@@ -107,6 +93,19 @@ final class MusicEditorViewController: UIViewController, MusicEditorInput {
     setupUI()
 
     navigationController?.navigationBar.isHidden = true
+  }
+
+  func setLayerForModifications(_ layer: LayerModel?) {
+    settingsControlAreaView.configure(with: layer)
+    if let layer {
+      showWaveform(for: layer)
+    } else {
+      hideWaveform()
+    }
+  }
+
+  func addLayerToLayersView(_ layer: LayerModel) {
+    layersView.addLayer(layer)
   }
 
   private func setupUI() {
@@ -177,30 +176,28 @@ final class MusicEditorViewController: UIViewController, MusicEditorInput {
   }
 
   private func playSample(index: Int, type: SampleType) {
-    guard let layer = LayerModel(sampleType: type, postfix: "\(index + 1)") else { return }
+    guard let layer = LayerModel(
+      sampleType: type,
+      postfix: "\(index + 1)"
+    ) else { return }
     viewModel.playPreview(for: layer)
   }
 
   private func sampleSelected(at index: Int, type: SampleType) {
-    guard let layer = LayerModel(sampleType: type, postfix: "\(index + 1)")
+    guard let layer = LayerModel(
+      sampleType: type,
+      postfix: "\(index + 1)"
+    )
     else { return }
 
     DispatchQueue.main.async { [weak self] in
       guard let self else { return }
       viewModel.stopPreview()
+      viewModel.addLayer(layer)
       if layersView.isEmpty {
         layersButton.isOpened = true
       }
-      layersView.addLayer(layer)
-      audioMixer.play(layer)
-      setLayerForModifications(layer)
     }
-  }
-
-  private func setLayerForModifications(_ layer: LayerModel) {
-    settingsChangingLayer = layer
-    showWaveform(for: layer)
-    settingsControlAreaView.configure(with: layer)
   }
 
   private func showWaveform(for layer: LayerModel) {
@@ -235,7 +232,7 @@ final class MusicEditorViewController: UIViewController, MusicEditorInput {
 
   @objc
   private func updateWaveformProgress() {
-    guard let settingsChangingLayer,
+    guard let settingsChangingLayer = viewModel.settingsChangingLayer,
           audioMixer.isLayerPlaying(settingsChangingLayer)
     else { return }
     let duration = audioMixer.playedTime(settingsChangingLayer)
@@ -268,14 +265,13 @@ final class MusicEditorViewController: UIViewController, MusicEditorInput {
   @objc
   private func micRecordTapped() {
     FeedbackGenerator.selectionChanged()
+
     if audioRecorder.isRecording {
       recordMicrophoneButton.backgroundColor = .white
       guard let layer = audioRecorder.stopRecording() else { return }
-      layersView.addLayer(layer)
-      audioMixer.play(layer)
-      setLayerForModifications(layer)
+      viewModel.addLayer(layer)
     } else {
-      audioMixer.pauseAll()
+      viewModel.pauseAll()
       recordMicrophoneButton.backgroundColor = .red
       audioRecorder.record { [weak self] in
         self?.recordMicrophoneButton.backgroundColor = .white
@@ -292,7 +288,7 @@ final class MusicEditorViewController: UIViewController, MusicEditorInput {
     FeedbackGenerator.selectionChanged()
     shouldRecord.toggle()
     recordSampleButton.backgroundColor = shouldRecord ? .red : .white
-    audioMixer.playAll()
+    viewModel.playAll()
     DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) { [weak self] in
       guard let self else { return }
       audioMixer.renderToFile(isStart: shouldRecord) { fileUrl in
@@ -308,15 +304,12 @@ final class MusicEditorViewController: UIViewController, MusicEditorInput {
   @objc
   private func playPauseTapped() {
     FeedbackGenerator.selectionChanged()
-    if isAllPlaying {
-      viewModel.pauseAll()
-      isAllPlaying = false
-      playPauseButton.setImage(Asset.play.image, for: .normal)
-    } else {
-      viewModel.playAll()
-      isAllPlaying = true
-      playPauseButton.setImage(Asset.pause.image, for: .normal)
-    }
+    let isAllPlaying = viewModel.isAllPlaying
+    playPauseButton.setImage(
+      isAllPlaying ? Asset.play.image : Asset.pause.image,
+      for: .normal
+    )
+    return isAllPlaying ? viewModel.pauseAll() : viewModel.playAll()
   }
 
   private func layersButtonTapped(_ isLayersViewHidden: Bool) {
@@ -451,19 +444,16 @@ final class MusicEditorViewController: UIViewController, MusicEditorInput {
   }
 
   private func makeLayersView() -> LayersView {
-    let view = LayersView(audioController: audioMixer) { [weak self] layer in
+    let view = LayersView(audioController: viewModel.audioController) { [weak self] layer in
       self?.layersButton.isOpened = false
-      self?.setLayerForModifications(layer)
+      self?.viewModel.changingLayerSet(to: layer)
     } heightDidChange: { [weak self] height in
       self?.layersHeightConstraint?.constraint.update(offset: height)
       UIView.animate(withDuration: 0.3) { [weak self] in
         self?.view.layoutSubviews()
       }
     } didDeleteLayer: { [weak self] layer in
-      self?.audioMixer.stop(layer)
-      guard self?.settingsChangingLayer == layer else { return }
-      self?.hideWaveform()
-      self?.settingsControlAreaView.configure(with: nil)
+      self?.viewModel.layerDidDelete(layer)
     }
     view.alpha = .zero
     return view
@@ -482,4 +472,10 @@ final class MusicEditorViewController: UIViewController, MusicEditorInput {
 fileprivate enum Constants {
   static let waveformHeight = 48 * koeff
   static let koeff = 0.8
+  static let waveformScrollInsets = UIEdgeInsets(
+    top: .zero,
+    left: 16,
+    bottom: .zero,
+    right: 16
+  )
 }

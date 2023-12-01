@@ -1,5 +1,6 @@
 // Created with love by Igor Klyuzhev in 2023
 
+import AVFoundation
 import Foundation
 
 final class MusicEditorViewModel: MusicEditorOutput {
@@ -8,6 +9,17 @@ final class MusicEditorViewModel: MusicEditorOutput {
   private let audioRecorder: MicrophoneAudioRecorder
 
   private var previewLayerPlaying: LayerModel?
+
+  var settingsChangingLayer: LayerModel?
+  var isAllPlaying: Bool = false
+
+  var audioController: AudioControlling {
+    audioMixer
+  }
+
+  var audioRecordingFormat: AVAudioFormat {
+    audioMixer.format
+  }
 
   init(
     audioMixer: AudioMixer,
@@ -34,11 +46,22 @@ final class MusicEditorViewModel: MusicEditorOutput {
     self.previewLayerPlaying = nil
   }
 
-  func addLayer(_ layer: LayerModel) {}
+  func addLayer(_ layer: LayerModel) {
+    audioMixer.play(layer)
+    view?.addLayerToLayersView(layer)
+    changingLayerSet(to: layer)
+  }
 
-  func changingLayerSet(to layer: LayerModel) {}
+  func changingLayerSet(to layer: LayerModel?) {
+    settingsChangingLayer = layer
+    view?.setLayerForModifications(layer)
+  }
 
-  func changeLayerSetting(setting: SettingType, value: Double) {}
+  func layerDidDelete(_ layer: LayerModel) {
+    audioMixer.stop(layer)
+    guard settingsChangingLayer == layer else { return }
+    changingLayerSet(to: nil)
+  }
 
   func startRecordingVoice() {}
 
@@ -49,10 +72,12 @@ final class MusicEditorViewModel: MusicEditorOutput {
   func stopRecordingComposition() {}
 
   func playAll() {
+    isAllPlaying = true
     audioMixer.playAll()
   }
 
   func pauseAll() {
+    isAllPlaying = false
     audioMixer.pauseAll()
   }
 }
