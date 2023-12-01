@@ -3,7 +3,7 @@
 import AVFoundation
 import Foundation
 
-enum SampleType: String {
+enum SampleType: String, Codable {
   case guitar
   case trumpet
   case drum
@@ -23,7 +23,7 @@ enum SampleType: String {
   }
 }
 
-final class LayerModel: Hashable {
+final class LayerModel: Hashable, Codable {
   let id: UUID
   let name: String
   let audioFileUrl: URL
@@ -72,6 +72,17 @@ final class LayerModel: Hashable {
       isMuted: false,
       sampleType: sampleType
     )
+  }
+
+  init(from decoder: Decoder) throws {
+    let container = try decoder.container(keyedBy: CodingKeys.self)
+    self.id = try container.decode(UUID.self, forKey: .id)
+    self.name = try container.decode(String.self, forKey: .name)
+    let audioFileUrl = try container.decode(URL.self, forKey: .audioFileUrl)
+    let fileName = audioFileUrl.lastPathComponent
+    self.audioFileUrl = Bundle.main.url(forResource: fileName, withExtension: nil) ?? audioFileUrl
+    self.sampleType = try container.decode(SampleType.self, forKey: .sampleType)
+    self.isMuted = try container.decode(Bool.self, forKey: .isMuted)
   }
 
   static func == (lhs: LayerModel, rhs: LayerModel) -> Bool {

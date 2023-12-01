@@ -8,6 +8,7 @@ final class MusicEditorCoordinator {
   private let audioMixer: AudioMixer
   private let microphoneRecorder: MicrophoneAudioRecorder
   private let screenAssembly: ScreenAssembly
+  private let projectSaver: ProjectsSaving
   private let navigationController: UINavigationController
 
   init(
@@ -16,6 +17,7 @@ final class MusicEditorCoordinator {
     audioMixer: AudioMixer,
     microphoneRecorder: MicrophoneAudioRecorder,
     screenAssembly: ScreenAssembly,
+    projectSaver: ProjectsSaving,
     navigationController: UINavigationController
   ) {
     self.project = project
@@ -23,12 +25,14 @@ final class MusicEditorCoordinator {
     self.audioMixer = audioMixer
     self.microphoneRecorder = microphoneRecorder
     self.screenAssembly = screenAssembly
+    self.projectSaver = projectSaver
     self.navigationController = navigationController
   }
 
   func start() {
     let viewModel = MusicEditorViewModel(
       project: project,
+      projectSaver: projectSaver,
       audioMixer: audioMixer,
       audioRecorder: microphoneRecorder
     )

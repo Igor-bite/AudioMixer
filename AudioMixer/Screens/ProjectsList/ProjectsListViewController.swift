@@ -35,6 +35,11 @@ final class ProjectsListViewController: UIViewController {
     viewModel.viewDidLoad()
   }
 
+  override func viewDidAppear(_ animated: Bool) {
+    super.viewDidAppear(animated)
+    viewModel.viewDidAppear()
+  }
+
   func updateCollectionView() {
     var snapshot = NSDiffableDataSourceSnapshot<Int, ProjectModel>()
     snapshot.appendSections([0])

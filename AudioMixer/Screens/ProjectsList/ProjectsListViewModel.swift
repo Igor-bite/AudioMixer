@@ -18,14 +18,15 @@ final class ProjectsListViewModel {
   ) {
     self.coordinator = coordinator
     self.projectsSaver = projectsSaver
-
-    projectsSaver.loadProjects(completion: { [weak self] projects in
-      self?.projects = projects
-    })
+    self.projects = projectsSaver.getProjects()
   }
 
   func viewDidLoad() {
     view?.updateCollectionView()
+  }
+
+  func viewDidAppear() {
+    self.projects = projectsSaver.getProjects()
   }
 
   func createProjectTapped() {

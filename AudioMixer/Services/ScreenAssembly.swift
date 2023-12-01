@@ -24,6 +24,7 @@ final class ScreenAssembly {
       audioMixer: audioMixer,
       microphoneRecorder: microphoneRecorder,
       screenAssembly: self,
+      projectSaver: projectsSaver,
       navigationController: rootNavigationController
     )
   }

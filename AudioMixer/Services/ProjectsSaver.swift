@@ -4,14 +4,30 @@ import Foundation
 
 protocol ProjectsSaving {
   func save(project: ProjectModel)
-  func loadProjects(completion: ([ProjectModel]) -> Void)
+  func getProjects() -> [ProjectModel]
 }
 
 final class ProjectsSaver: ProjectsSaving {
-  func save(project: ProjectModel) {}
+  private let defaults = UserDefaults.standard
+  private lazy var projects: [ProjectModel] = {
+    guard let data = defaults.data(forKey: "saved-projects") else { return [] }
+    return (try? JSONDecoder().decode([ProjectModel].self, from: data)) ?? []
+  }()
 
-  func loadProjects(completion: ([ProjectModel]) -> Void) {
-    completion(projectsMock)
+  func save(project: ProjectModel) {
+    if !projects.contains(project) {
+      projects.append(project)
+    }
+
+    if let encoded = try? JSONEncoder().encode(projects) {
+      defaults.set(encoded, forKey: "saved-projects")
+    } else {
+      assertionFailure("Encoding projects failed")
+    }
+  }
+
+  func getProjects() -> [ProjectModel] {
+    projects
   }
 }
 

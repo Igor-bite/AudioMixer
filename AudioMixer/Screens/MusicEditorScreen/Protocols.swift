@@ -21,6 +21,7 @@ protocol MusicEditorOutput {
   var isRecordingVoice: CurrentValueSubject<Bool, Never> { get }
 
   func viewDidAppear()
+  func viewDidDisappear()
 
   func playPreview(for layer: LayerModel)
   func stopPreview()

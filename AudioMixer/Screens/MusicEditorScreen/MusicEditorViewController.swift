@@ -79,6 +79,11 @@ final class MusicEditorViewController: UIViewController, MusicEditorInput {
     viewModel.viewDidAppear()
   }
 
+  override func viewDidDisappear(_ animated: Bool) {
+    super.viewDidDisappear(animated)
+    viewModel.viewDidDisappear()
+  }
+
   func setLayerForModifications(_ layer: LayerModel?) {
     settingsControlAreaView.configure(with: layer)
     if let layer {

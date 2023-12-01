@@ -180,7 +180,6 @@ final class LayerCell: UICollectionViewCell {
 extension LayerCell: AudioChangesObserver {
   func playingStateChanged() {
     DispatchQueue.main.async {
-      self.displayLink.isPaused = true
       self.updatePlayingState()
     }
   }

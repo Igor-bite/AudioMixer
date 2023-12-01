@@ -2,12 +2,12 @@
 
 import Foundation
 
-final class ProjectModel: Hashable {
+final class ProjectModel: Hashable, Codable {
   let id: UUID
   let name: String
   let creationDate: Date
   let updateDate: Date
-  let layers: [LayerModel]
+  var layers: [LayerModel]
 
   init(
     id: UUID = .init(),

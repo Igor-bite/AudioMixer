@@ -9,6 +9,7 @@ final class MusicEditorViewModel: MusicEditorOutput {
   private let audioMixer: AudioMixer
   private let audioRecorder: MicrophoneAudioRecorder
   private let project: ProjectModel
+  private let projectSaver: ProjectsSaving
 
   private var previewLayerPlaying: LayerModel?
   private var recordCompositionWorkItem: DispatchWorkItem?
@@ -24,10 +25,12 @@ final class MusicEditorViewModel: MusicEditorOutput {
 
   init(
     project: ProjectModel,
+    projectSaver: ProjectsSaving,
     audioMixer: AudioMixer,
     audioRecorder: MicrophoneAudioRecorder
   ) {
     self.project = project
+    self.projectSaver = projectSaver
     self.audioMixer = audioMixer
     self.audioRecorder = audioRecorder
   }
@@ -37,6 +40,11 @@ final class MusicEditorViewModel: MusicEditorOutput {
       project.layers,
       shouldOpenLayers: !project.layers.isEmpty
     )
+  }
+
+  func viewDidDisappear() {
+    projectSaver.save(project: project)
+    audioMixer.reset()
   }
 
   func playPreview(for layer: LayerModel) {
@@ -57,6 +65,7 @@ final class MusicEditorViewModel: MusicEditorOutput {
   }
 
   func addLayer(_ layer: LayerModel) {
+    project.layers.append(layer)
     audioMixer.play(layer)
     view?.addLayerToLayersView(layer)
     changingLayerSet(to: layer)
@@ -68,6 +77,11 @@ final class MusicEditorViewModel: MusicEditorOutput {
   }
 
   func layerDidDelete(_ layer: LayerModel) {
+    if let layerIndex = project.layers.firstIndex(of: layer) {
+      project.layers.remove(at: layerIndex)
+    } else {
+      assertionFailure("Invalid project state")
+    }
     audioMixer.stop(layer)
     guard settingsChangingLayer == layer else { return }
     changingLayerSet(to: nil)
@@ -105,7 +119,12 @@ final class MusicEditorViewModel: MusicEditorOutput {
 
   func playAll() {
     isAllPlaying = true
-    audioMixer.playAll()
+    for layer in project.layers {
+      if audioMixer.isLayerPlaying(layer) {
+        audioMixer.stop(layer)
+      }
+      audioMixer.play(layer)
+    }
   }
 
   func pauseAll() {

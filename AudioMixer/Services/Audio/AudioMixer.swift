@@ -15,6 +15,7 @@ protocol AudioControlling {
   func rate(for layer: LayerModel) -> Float
   func isLayerPlaying(_ layer: LayerModel) -> Bool
   func playedTime(_ layer: LayerModel) -> Double
+  func reset()
 
   func observeChanges(_ observer: AudioChangesObserver)
 }
@@ -72,10 +73,28 @@ final class AudioMixer: AudioControlling {
     )
   }
 
+  func reset() {
+    for node in playerNodes.values {
+      audioEngine.disconnectNodeInput(node)
+      audioEngine.disconnectNodeOutput(node)
+      audioEngine.detach(node)
+    }
+
+    for node in pitchNodes.values {
+      audioEngine.disconnectNodeInput(node)
+      audioEngine.disconnectNodeOutput(node)
+      audioEngine.detach(node)
+    }
+
+    playerNodes.removeAll(keepingCapacity: true)
+    pitchNodes.removeAll(keepingCapacity: true)
+  }
+
   func play(_ layer: LayerModel) {
     if !isRunning { setupAudioEngine() }
     let player = getPlayerNode(for: layer)
     player.play(layer: layer)
+    notifyAudioChangeObservers()
   }
 
   func stop(_ layer: LayerModel, shouldRemove: Bool = false) {
@@ -83,6 +102,7 @@ final class AudioMixer: AudioControlling {
     if player.isPlaying {
       player.stop()
     }
+    notifyAudioChangeObservers()
     guard shouldRemove else { return }
     detachPlayerNode(playerNode: player)
     playerNodes[layer] = nil
@@ -91,6 +111,7 @@ final class AudioMixer: AudioControlling {
   func pause(_ layer: LayerModel) {
     guard let player = playerNodes[layer] else { return }
     player.pause()
+    notifyAudioChangeObservers()
   }
 
   func setVolume(for layer: LayerModel, volume: Float) {
