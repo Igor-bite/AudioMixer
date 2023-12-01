@@ -74,12 +74,20 @@ final class WaveformScrollingView: UIView {
     )
     waveFormView.reset()
     waveFormView.waveformAudioURL = layer.audioFileUrl
+
+    let contentSize = size
+    guard contentSize.width > UIScreen.main.bounds.width - 32 else {
+      waveFormScrollView.contentInset.left = UIScreen.main.bounds.width / 2 - contentSize.width / 2
+      return
+    }
+    waveFormScrollView.contentInset.left = 16
   }
 
   func hideWaveform() {
     showingLayer = nil
     waveFormView.reset()
     displayLink.isPaused = true
+    previousProgress = -1
   }
 
   @objc
@@ -93,11 +101,7 @@ final class WaveformScrollingView: UIView {
     previousProgress = progress
     waveFormView.progress = progress
     let contentSize = waveFormScrollView.contentSize
-    guard contentSize.width > UIScreen.main.bounds.width - 32 else {
-      waveFormScrollView.contentInset.left = UIScreen.main.bounds.width / 2 - contentSize.width / 2
-      return
-    }
-    waveFormScrollView.contentInset.left = 16
+    guard contentSize.width > UIScreen.main.bounds.width - 32 else { return }
     let offset = contentSize.width * progress
     waveFormScrollView.contentOffset.x = max(-16, offset - UIScreen.main.bounds.width / 2)
   }
