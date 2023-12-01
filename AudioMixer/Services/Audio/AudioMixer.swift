@@ -135,12 +135,12 @@ final class AudioMixer: AudioControlling {
   }
 
   func volume(for layer: LayerModel) -> Float {
-    guard let node = playerNodes[layer] else { return .zero }
+    guard let node = playerNodes[layer] else { return 0.5 }
     return node.volume
   }
 
   func rate(for layer: LayerModel) -> Float {
-    guard let node = pitchNodes[layer] else { return .zero }
+    guard let node = pitchNodes[layer] else { return 1 }
     return node.rate
   }
 
