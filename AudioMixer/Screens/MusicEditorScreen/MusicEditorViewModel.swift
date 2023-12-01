@@ -1,6 +1,7 @@
 // Created with love by Igor Klyuzhev in 2023
 
 import AVFoundation
+import Combine
 import Foundation
 
 final class MusicEditorViewModel: MusicEditorOutput {
@@ -9,16 +10,15 @@ final class MusicEditorViewModel: MusicEditorOutput {
   private let audioRecorder: MicrophoneAudioRecorder
 
   private var previewLayerPlaying: LayerModel?
+  private var recordCompositionWorkItem: DispatchWorkItem?
 
   var settingsChangingLayer: LayerModel?
-  var isAllPlaying: Bool = false
+  var isAllPlaying = false
+  var isCompositionRecording = false
+  var isRecordingVoice = CurrentValueSubject<Bool, Never>(false)
 
   var audioController: AudioControlling {
     audioMixer
-  }
-
-  var audioRecordingFormat: AVAudioFormat {
-    audioMixer.format
   }
 
   init(
@@ -63,13 +63,35 @@ final class MusicEditorViewModel: MusicEditorOutput {
     changingLayerSet(to: nil)
   }
 
-  func startRecordingVoice() {}
+  func micRecordTapped() {
+    if audioRecorder.isRecording {
+      isRecordingVoice.send(false)
+      guard let layer = audioRecorder.stopRecording() else { return }
+      addLayer(layer)
+    } else {
+      isRecordingVoice.send(true)
+      pauseAll()
+      audioRecorder.record { [weak self] in
+        self?.isRecordingVoice.send(false)
+      }
+    }
+  }
 
-  func stopRecordingVoice() {}
-
-  func startRecordingComposition() {}
-
-  func stopRecordingComposition() {}
+  func recordSampleTapped() {
+    isCompositionRecording.toggle()
+    let recordCompositionWorkItem = DispatchWorkItem { [weak self] in
+      guard let self else { return }
+      audioMixer.renderToFile(isStart: isCompositionRecording) { fileUrl in
+        DispatchQueue.main.async { [weak self] in
+          self?.recordCompositionWorkItem = nil
+          self?.view?.showSharing(for: fileUrl)
+        }
+      }
+    }
+    self.recordCompositionWorkItem = recordCompositionWorkItem
+    DispatchQueue.main.asyncAfter(deadline: .now() + 0.2, execute: recordCompositionWorkItem)
+    return isCompositionRecording ? playAll() : pauseAll()
+  }
 
   func playAll() {
     isAllPlaying = true

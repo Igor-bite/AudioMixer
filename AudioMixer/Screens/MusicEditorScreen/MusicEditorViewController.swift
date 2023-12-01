@@ -1,5 +1,6 @@
 // Created with love by Igor Klyuzhev in 2023
 
+import Combine
 import SnapKit
 import UIKit
 
@@ -58,11 +59,8 @@ final class MusicEditorViewController: UIViewController, MusicEditorInput {
   }()
 
   private lazy var audioMixer = AudioMixer()
-  private lazy var audioRecorder = MicrophoneAudioRecorder(
-    format: viewModel.audioRecordingFormat,
-    alertPresenter: alertPresenter
-  )
 
+  private var bag = Set<AnyCancellable>()
   private var shouldRecord = false
   private lazy var displayLink = createDisplayLink(.common)
   private var previousProgress: Double = -1
@@ -106,6 +104,25 @@ final class MusicEditorViewController: UIViewController, MusicEditorInput {
 
   func addLayerToLayersView(_ layer: LayerModel) {
     layersView.addLayer(layer)
+  }
+
+  func showSharing(for file: URL) {
+    let activityViewController = UIActivityViewController(
+      activityItems: [file],
+      applicationActivities: nil
+    )
+    activityViewController.completionWithItemsHandler = { _, _, _, _ in }
+    present(
+      activityViewController,
+      animated: true,
+      completion: nil
+    )
+  }
+
+  private func setupBinding() {
+    viewModel.isRecordingVoice.sink { [weak self] isRecordingVoice in
+      self?.recordMicrophoneButton.backgroundColor = isRecordingVoice ? .red : .white
+    }.store(in: &bag)
   }
 
   private func setupUI() {
@@ -265,18 +282,7 @@ final class MusicEditorViewController: UIViewController, MusicEditorInput {
   @objc
   private func micRecordTapped() {
     FeedbackGenerator.selectionChanged()
-
-    if audioRecorder.isRecording {
-      recordMicrophoneButton.backgroundColor = .white
-      guard let layer = audioRecorder.stopRecording() else { return }
-      viewModel.addLayer(layer)
-    } else {
-      viewModel.pauseAll()
-      recordMicrophoneButton.backgroundColor = .red
-      audioRecorder.record { [weak self] in
-        self?.recordMicrophoneButton.backgroundColor = .white
-      }
-    }
+    viewModel.micRecordTapped()
   }
 
   @objc
@@ -286,19 +292,8 @@ final class MusicEditorViewController: UIViewController, MusicEditorInput {
       return
     }
     FeedbackGenerator.selectionChanged()
-    shouldRecord.toggle()
-    recordSampleButton.backgroundColor = shouldRecord ? .red : .white
-    viewModel.playAll()
-    DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) { [weak self] in
-      guard let self else { return }
-      audioMixer.renderToFile(isStart: shouldRecord) { fileUrl in
-        DispatchQueue.main.async { [weak self] in
-          let activityViewController = UIActivityViewController(activityItems: [fileUrl], applicationActivities: nil)
-          activityViewController.completionWithItemsHandler = { _, _, _, _ in }
-          self?.present(activityViewController, animated: true, completion: nil)
-        }
-      }
-    }
+    viewModel.recordSampleTapped()
+    recordSampleButton.backgroundColor = viewModel.isCompositionRecording ? .red : .white
   }
 
   @objc
