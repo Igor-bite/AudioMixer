@@ -6,7 +6,7 @@ import ReplayKit
 final class ScreenRecorder: NSObject, RPPreviewViewControllerDelegate {
   private let recorder = RPScreenRecorder.shared()
 
-  var completion: ((URL) -> Void)?
+  var completion: ((UIViewController) -> Void)?
 
   func toggleRecording() {
     guard recorder.isAvailable else {
@@ -29,13 +29,13 @@ final class ScreenRecorder: NSObject, RPPreviewViewControllerDelegate {
   }
 
   func stopRecording() {
-    let url = FileManager.getDocumentsDirectory().appending(path: "\(UUID().uuidString).mov")
-    recorder.stopRecording(withOutput: url) { [weak self] error in
+    recorder.stopRecording { [weak self] prev, error in
       if let error {
         Logger.log(error)
         return
       }
-      self?.completion?(url)
+      guard let prev else { return }
+      self?.completion?(prev)
     }
   }
 }

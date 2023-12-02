@@ -39,8 +39,8 @@ final class PlayerCoordinator {
       audioController: audioController,
       coordinator: self
     )
-    screenRecorder.completion = { [weak self] url in
-      self?.shareFile(fileUrl: url)
+    screenRecorder.completion = { [weak self] prev in
+      self?.navigationController.present(prev, animated: true)
     }
     let viewController = PlayerViewController(viewModel: viewModel)
     viewModel.view = viewController
