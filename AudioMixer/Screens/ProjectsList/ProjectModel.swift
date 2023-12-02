@@ -4,7 +4,7 @@ import Foundation
 
 final class ProjectModel: Hashable, Codable {
   let id: UUID
-  let name: String
+  var name: String
   let creationDate: Date
   let updateDate: Date
   var layers: [LayerModel]

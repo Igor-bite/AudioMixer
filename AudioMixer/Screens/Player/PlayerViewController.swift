@@ -4,7 +4,7 @@ import Combine
 import SnapKit
 import UIKit
 
-final class PlayerViewController: UIViewController {
+final class PlayerViewController: UIViewController, PlayerInput {
   private let viewModel: PlayerOutput
 
   private lazy var backButton = makeButton(
@@ -32,6 +32,7 @@ final class PlayerViewController: UIViewController {
     field.text = viewModel.trackName
     field.font = .systemFont(ofSize: 16)
     field.tintColor = .white
+    field.addTarget(self, action: #selector(textFieldChanged), for: .allEditingEvents)
     return field
   }()
 
@@ -193,6 +194,7 @@ final class PlayerViewController: UIViewController {
     viewModel.isPlaying.sink { [weak self] isPlaying in
       let image = isPlaying ? UIImage(systemName: "pause.fill") : UIImage(systemName: "play.fill")
       self?.playPauseButton.setImage(image, for: .normal)
+      self?.musicVisualizer.shouldAnimate = isPlaying
     }.store(in: bag)
 
     viewModel.playedTime.sink { [weak self] playedTime in
@@ -229,6 +231,11 @@ final class PlayerViewController: UIViewController {
     viewModel.playPauseTapped()
   }
 
+  @objc
+  private func textFieldChanged() {
+    viewModel.textFieldChanged(trackNameTextField.text ?? "")
+  }
+
   private func makeButton(
     image: UIImage?,
     action: Selector,
@@ -244,8 +251,6 @@ final class PlayerViewController: UIViewController {
     return button
   }
 }
-
-extension PlayerViewController: PlayerInput {}
 
 extension Int {
   var toTimeString: String {

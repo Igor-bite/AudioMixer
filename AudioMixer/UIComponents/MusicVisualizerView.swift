@@ -49,7 +49,36 @@ final class MusicVisualizerView: UIView {
     }
   }
 
-  private func translationValue(for size: CGSize) -> CGPoint {
+  private func updateAnimation(for view: AnimatingView) {
+    guard shouldAnimate else { return }
+    UIView.animate(
+      withDuration: animationDurationValue(for: view),
+      delay: .zero,
+      options: .curveEaseInOut
+    ) { [weak self] in
+      guard let self else { return }
+      let scale = scaleValue(for: view)
+      var size = view.size
+      size.width *= scale.x
+      size.height *= scale.y
+      let translation = translationValue(for: view, with: size)
+      view.view.transform = CGAffineTransform(
+        translationX: translation.x,
+        y: translation.y
+      ).scaledBy(
+        x: scale.x,
+        y: scale.y
+      ).rotated(
+        by: rotationValue(for: view)
+      )
+
+      view.view.alpha = alphaValue(for: view)
+    } completion: { [weak self] _ in
+      self?.updateAnimation(for: view)
+    }
+  }
+
+  private func translationValue(for view: AnimatingView, with size: CGSize) -> CGPoint {
     let screenBounds = UIScreen.main.bounds
     let activeHeight = screenBounds.height - safeAreaInsets.top - safeAreaInsets.bottom
     let activeWidth = screenBounds.width
@@ -61,53 +90,26 @@ final class MusicVisualizerView: UIView {
     )
   }
 
-  private var scaleValue: CGPoint {
-    let v = CGFloat.random(in: 0 ... 2)
+  private func scaleValue(for view: AnimatingView) -> CGPoint {
+    let v = CGFloat.random(in: 1 ... 2) * view.layer.volume
     return CGPoint(
       x: v,
       y: v
     )
   }
 
-  private var rotationValue: CGFloat {
+  private func rotationValue(for view: AnimatingView) -> CGFloat {
     CGFloat.random(in: -CGFloat.pi ... CGFloat.pi)
   }
 
-  private var alphaValue: CGFloat {
-    CGFloat.random(in: 0 ... 1)
+  private func alphaValue(for view: AnimatingView) -> CGFloat {
+    let random = CGFloat.random(in: 0 ... 1)
+    return random * view.layer.volume
   }
 
-  private var animationDurationValue: CGFloat {
-    CGFloat.random(in: 2 ... 5)
-  }
-
-  private func updateAnimation(for view: AnimatingView) {
-    guard shouldAnimate else { return }
-    UIView.animate(
-      withDuration: animationDurationValue,
-      delay: .zero,
-      options: .curveEaseInOut
-    ) { [weak self] in
-      guard let self else { return }
-      let scale = scaleValue
-      var size = view.size
-      size.width *= scale.x
-      size.height *= scale.y
-      let translation = translationValue(for: size)
-      view.view.transform = CGAffineTransform(
-        translationX: translation.x,
-        y: translation.y
-      ).scaledBy(
-        x: scale.x,
-        y: scale.y
-      ).rotated(
-        by: rotationValue
-      )
-
-      view.view.alpha = alphaValue
-    } completion: { [weak self] _ in
-      self?.updateAnimation(for: view)
-    }
+  private func animationDurationValue(for view: AnimatingView) -> CGFloat {
+    let random = CGFloat.random(in: 3 ... 5)
+    return min(10, max(random * view.layer.rate, 0.3))
   }
 }
 
@@ -133,6 +135,7 @@ struct AnimatingView {
 
 protocol MusicVisualizerAudioControlling {
   var isStreaming: Bool { get }
+  var isSomethingPlaying: Bool { get }
   var currentPlayingTime: TimeInterval? { get }
   var audioDuration: TimeInterval? { get }
 

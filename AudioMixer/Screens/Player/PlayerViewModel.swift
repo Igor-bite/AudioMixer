@@ -35,6 +35,9 @@ final class PlayerViewModel: PlayerOutput {
     self.player = audioController
     self.isStreaming = audioController?.isStreaming ?? false
     setupTimer()
+    if let isSomethingPlaying = audioController?.isSomethingPlaying {
+      isPlaying.send(isSomethingPlaying)
+    }
   }
 
   func backTapped() {
@@ -64,9 +67,18 @@ final class PlayerViewModel: PlayerOutput {
     isPlaying.send(!isPlaying.value)
   }
 
-  func previousTrackTapped() {}
+  func previousTrackTapped() {
+    player?.seek(to: .zero)
+  }
 
-  func nextTrackTapped() {}
+  func nextTrackTapped() {
+    player?.seek(to: trackDuration)
+  }
+
+  func textFieldChanged(_ text: String) {
+    guard player?.isStreaming == true else { return }
+    project.name = text
+  }
 
   func newTimingValue(_ value: CGFloat) {
     player?.seek(to: 0)

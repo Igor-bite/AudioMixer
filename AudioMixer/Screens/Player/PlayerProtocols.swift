@@ -20,5 +20,6 @@ protocol PlayerOutput {
   func playPauseTapped()
   func previousTrackTapped()
   func nextTrackTapped()
+  func textFieldChanged(_ text: String)
   func newTimingValue(_ value: CGFloat)
 }

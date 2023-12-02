@@ -47,6 +47,7 @@ final class MusicEditorViewModel: MusicEditorOutput {
       project.layers,
       shouldOpenLayers: !project.layers.isEmpty
     )
+    audioMixer.createPlayerNodes(for: project.layers)
   }
 
   func viewDidDisappear() {

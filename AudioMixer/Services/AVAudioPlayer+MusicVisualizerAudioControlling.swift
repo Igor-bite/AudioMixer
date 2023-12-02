@@ -7,6 +7,10 @@ extension AVAudioPlayer: MusicVisualizerAudioControlling {
     false
   }
 
+  var isSomethingPlaying: Bool {
+    isPlaying
+  }
+
   var audioDuration: TimeInterval? { duration }
 
   var currentPlayingTime: TimeInterval? {

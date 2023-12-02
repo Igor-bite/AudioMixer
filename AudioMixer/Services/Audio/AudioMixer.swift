@@ -60,6 +60,15 @@ final class AudioMixer: AudioControlling {
     audioEngine.outputNode.outputFormat(forBus: .zero)
   }
 
+  var isSomethingPlaying: Bool {
+    for node in playerNodes.values {
+      if node.isPlaying {
+        return true
+      }
+    }
+    return false
+  }
+
   init() {
     setupAudioSession()
     setupAudioEngine()
@@ -121,6 +130,7 @@ final class AudioMixer: AudioControlling {
 
   func setVolume(for layer: LayerModel, volume: Float) {
     guard let node = playerNodes[layer] else { return }
+    layer.volume = CGFloat(volume)
     node.volume = volume
   }
 
@@ -136,6 +146,7 @@ final class AudioMixer: AudioControlling {
 
   func setRate(for layer: LayerModel, rate: Float) {
     guard let node = pitchNodes[layer] else { return }
+    layer.rate = CGFloat(rate)
     node.rate = rate
   }
 
@@ -185,6 +196,14 @@ final class AudioMixer: AudioControlling {
 
   func observeChanges(_ observer: AudioChangesObserver) {
     audioChangesObservers.insert(WeakHolder(observer))
+  }
+
+  func createPlayerNodes(for layers: [LayerModel]) {
+    for layer in layers {
+      if playerNodes[layer] == nil {
+        _ = makeAndAttachPlayerNode(for: layer)
+      }
+    }
   }
 
   private func installTap() {
@@ -271,10 +290,12 @@ final class AudioMixer: AudioControlling {
 
   private func makeAndAttachPlayerNode(for layer: LayerModel) -> AVAudioPlayerNode {
     let playerNode = AVAudioPlayerNode()
+    playerNode.volume = Float(layer.volume)
     playerNodes[layer] = playerNode
     audioEngine.attach(playerNode)
 
     let pitchNode = AVAudioUnitTimePitch()
+    pitchNode.rate = Float(layer.rate)
     pitchNodes[layer] = pitchNode
     audioEngine.attach(pitchNode)
 

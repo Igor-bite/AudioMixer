@@ -65,6 +65,8 @@ final class LayerModel: Hashable, Codable {
   let audioFileUrl: URL
   let sampleType: SampleType
   var isMuted: Bool
+  var volume: CGFloat = 0.5
+  var rate: CGFloat = 1
 
   lazy var audioFile = try? AVAudioFile(forReading: audioFileUrl)
   lazy var duration: Double = {
