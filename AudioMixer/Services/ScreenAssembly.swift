@@ -17,6 +17,8 @@ final class ScreenAssembly {
 
   lazy var projectsSaver: ProjectsSaving = ProjectsSaver()
 
+  lazy var screenRecorder = ScreenRecorder()
+
   func makeMusicEditor(for project: ProjectModel) -> MusicEditorCoordinator {
     MusicEditorCoordinator(
       project: project,
@@ -32,6 +34,15 @@ final class ScreenAssembly {
   func makeProjectsList() -> ProjectsListViewCoordinator {
     ProjectsListViewCoordinator(
       projectsSaver: projectsSaver,
+      screenAssembly: self,
+      navigationController: rootNavigationController
+    )
+  }
+
+  func makePlayer(for fileUrl: URL) -> PlayerCoordinator {
+    PlayerCoordinator(
+      screenRecorder: screenRecorder,
+      trackUrl: fileUrl,
       screenAssembly: self,
       navigationController: rootNavigationController
     )

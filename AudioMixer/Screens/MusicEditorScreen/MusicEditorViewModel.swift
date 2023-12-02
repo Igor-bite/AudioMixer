@@ -6,6 +6,7 @@ import Foundation
 
 final class MusicEditorViewModel: MusicEditorOutput {
   weak var view: MusicEditorInput?
+  private let coordinator: MusicEditorCoordinator
   private let audioMixer: AudioMixer
   private let audioRecorder: MicrophoneAudioRecorder
   private let project: ProjectModel
@@ -24,11 +25,13 @@ final class MusicEditorViewModel: MusicEditorOutput {
   }
 
   init(
+    coordinator: MusicEditorCoordinator,
     project: ProjectModel,
     projectSaver: ProjectsSaving,
     audioMixer: AudioMixer,
     audioRecorder: MicrophoneAudioRecorder
   ) {
+    self.coordinator = coordinator
     self.project = project
     self.projectSaver = projectSaver
     self.audioMixer = audioMixer
@@ -108,7 +111,8 @@ final class MusicEditorViewModel: MusicEditorOutput {
       audioMixer.renderToFile(isStart: isCompositionRecording) { fileUrl in
         DispatchQueue.main.async { [weak self] in
           self?.recordCompositionWorkItem = nil
-          self?.view?.showSharing(for: fileUrl)
+          self?.project.savedFileUrls.append(fileUrl)
+          self?.coordinator.showSharing(for: fileUrl)
         }
       }
     }

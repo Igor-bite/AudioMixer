@@ -8,19 +8,22 @@ final class ProjectModel: Hashable, Codable {
   let creationDate: Date
   let updateDate: Date
   var layers: [LayerModel]
+  var savedFileUrls: [URL]
 
   init(
     id: UUID = .init(),
     name: String,
     creationDate: Date = .init(),
     updateDate: Date = .init(),
-    layers: [LayerModel] = .init()
+    layers: [LayerModel] = .init(),
+    savedFileUrls: [URL] = .init()
   ) {
     self.id = id
     self.name = name
     self.creationDate = creationDate
     self.updateDate = updateDate
     self.layers = layers
+    self.savedFileUrls = savedFileUrls
   }
 
   static func == (lhs: ProjectModel, rhs: ProjectModel) -> Bool {

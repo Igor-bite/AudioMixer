@@ -45,7 +45,7 @@ final class MusicEditorViewController: UIViewController, MusicEditorInput {
     audioMixer: viewModel.audioController
   )
 
-  private var bag = Set<AnyCancellable>()
+  private var bag = CancellableBag()
   private var layersHeightConstraint: ConstraintMakerEditable?
 
   private let viewModel: MusicEditorOutput
@@ -69,9 +69,7 @@ final class MusicEditorViewController: UIViewController, MusicEditorInput {
     super.viewDidLoad()
 
     setupUI()
-
-    navigationController?.navigationBar.isHidden = true
-    view.backgroundColor = .black
+    setupBinding()
   }
 
   override func viewDidAppear(_ animated: Bool) {
@@ -103,26 +101,16 @@ final class MusicEditorViewController: UIViewController, MusicEditorInput {
     layersButton.isOpened = true
   }
 
-  func showSharing(for file: URL) {
-    let activityViewController = UIActivityViewController(
-      activityItems: [file],
-      applicationActivities: nil
-    )
-    activityViewController.completionWithItemsHandler = { _, _, _, _ in }
-    present(
-      activityViewController,
-      animated: true,
-      completion: nil
-    )
-  }
-
   private func setupBinding() {
     viewModel.isRecordingVoice.sink { [weak self] isRecordingVoice in
       self?.recordMicrophoneButton.backgroundColor = isRecordingVoice ? .red : .white
-    }.store(in: &bag)
+    }.store(in: bag)
   }
 
   private func setupUI() {
+    navigationController?.navigationBar.isHidden = true
+    view.backgroundColor = .black
+
     let stack = UIStackView()
     stack.distribution = .equalSpacing
     view.addSubviews(

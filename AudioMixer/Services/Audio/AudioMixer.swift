@@ -80,7 +80,10 @@ final class AudioMixer: AudioControlling {
       audioEngine.detach(node)
     }
 
-    for node in pitchNodes.values {
+    for (key, node) in pitchNodes {
+      if let bus = mixerNodeInputBusCache[key] {
+        audioEngine.disconnectNodeInput(layersMixerNode, bus: bus)
+      }
       audioEngine.disconnectNodeInput(node)
       audioEngine.disconnectNodeOutput(node)
       audioEngine.detach(node)
@@ -88,6 +91,8 @@ final class AudioMixer: AudioControlling {
 
     playerNodes.removeAll(keepingCapacity: true)
     pitchNodes.removeAll(keepingCapacity: true)
+    mixerNodeInputBusCache.removeAll(keepingCapacity: true)
+    mixerNodeInputBus = AVAudioNodeBus.min
   }
 
   func play(_ layer: LayerModel) {

@@ -9,7 +9,6 @@ protocol MusicEditorInput: AnyObject {
   func setLayerForModifications(_ layer: LayerModel?)
   func addLayerToLayersView(_ layer: LayerModel)
   func configureWithLayers(_ layers: [LayerModel], shouldOpenLayers: Bool)
-  func showSharing(for file: URL)
 }
 
 // ViewModel

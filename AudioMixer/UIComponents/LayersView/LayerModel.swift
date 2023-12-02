@@ -79,8 +79,7 @@ final class LayerModel: Hashable, Codable {
     self.id = try container.decode(UUID.self, forKey: .id)
     self.name = try container.decode(String.self, forKey: .name)
     let audioFileUrl = try container.decode(URL.self, forKey: .audioFileUrl)
-    let fileName = audioFileUrl.lastPathComponent
-    self.audioFileUrl = Bundle.main.url(forResource: fileName, withExtension: nil) ?? audioFileUrl
+    self.audioFileUrl = audioFileUrl.currentBundleUrl ?? audioFileUrl.currentDocumentsDirectory ?? audioFileUrl
     self.sampleType = try container.decode(SampleType.self, forKey: .sampleType)
     self.isMuted = try container.decode(Bool.self, forKey: .isMuted)
   }
@@ -91,5 +90,15 @@ final class LayerModel: Hashable, Codable {
 
   func hash(into hasher: inout Hasher) {
     hasher.combine(id)
+  }
+}
+
+extension URL {
+  var currentBundleUrl: URL? {
+    Bundle.main.url(forResource: lastPathComponent, withExtension: nil)
+  }
+
+  var currentDocumentsDirectory: URL {
+    FileManager.getDocumentsDirectory().appendingPathComponent(lastPathComponent)
   }
 }
