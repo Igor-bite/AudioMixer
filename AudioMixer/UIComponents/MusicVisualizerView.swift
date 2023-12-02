@@ -40,10 +40,6 @@ final class MusicVisualizerView: UIView {
       }
       view.alpha = .zero
     }
-
-    DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-      self.updateAnimations()
-    }
   }
 
   private func updateAnimations() {
@@ -137,8 +133,10 @@ struct AnimatingView {
 
 protocol MusicVisualizerAudioControlling {
   var isStreaming: Bool { get }
+  var currentPlayingTime: TimeInterval? { get }
+  var audioDuration: TimeInterval? { get }
 
-  func play()
+  func play() -> Bool
   func pause()
-  func seek(to time: CGFloat)
+  func seek(to time: TimeInterval)
 }

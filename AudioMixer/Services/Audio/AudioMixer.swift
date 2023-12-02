@@ -211,7 +211,7 @@ final class AudioMixer: AudioControlling {
         guard let self else { return }
 
         let date = Date().description.replacingOccurrences(of: " ", with: "_").replacingOccurrences(of: ":", with: "-")
-        let fileName = "RECORDING_\(date).caf"
+        let fileName = "REC_\(date).caf"
         let fileUrl = FileManager.getDocumentsDirectory().appendingPathComponent(fileName)
         let outputFile: AVAudioFile
         do {
@@ -370,5 +370,24 @@ extension AVAudioPlayerNode {
 
     scheduleBuffer(buffer, at: nil, options: .loops)
     play()
+  }
+}
+
+extension AudioMixer: MusicVisualizerAudioControlling {
+  var isStreaming: Bool { true }
+  var currentPlayingTime: TimeInterval? { nil }
+  var audioDuration: TimeInterval? { nil }
+
+  func play() -> Bool {
+    playAll()
+    return true
+  }
+
+  func pause() {
+    pauseAll()
+  }
+
+  func seek(to time: TimeInterval) {
+    assertionFailure("Should not be used with streaming")
   }
 }

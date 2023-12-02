@@ -47,7 +47,7 @@ final class MusicEditorCoordinator {
     navigationController.pushViewController(viewController, animated: true)
   }
 
-  func showPlayer(for project: ProjectModel) {
-    screenAssembly.makePlayer(for: project).start()
+  func showPlayer(for project: ProjectModel, isStreaming: Bool) {
+    screenAssembly.makePlayer(for: project, isStreaming: isStreaming).start()
   }
 }

@@ -38,6 +38,10 @@ final class MusicEditorViewModel: MusicEditorOutput {
     self.audioRecorder = audioRecorder
   }
 
+  func viewDidLoad() {
+    audioMixer.reset()
+  }
+
   func viewDidAppear() {
     view?.configureWithLayers(
       project.layers,
@@ -47,7 +51,6 @@ final class MusicEditorViewModel: MusicEditorOutput {
 
   func viewDidDisappear() {
     projectSaver.save(project: project)
-    audioMixer.reset()
   }
 
   func playPreview(for layer: LayerModel) {
@@ -113,7 +116,7 @@ final class MusicEditorViewModel: MusicEditorOutput {
           guard let self else { return }
           self.recordCompositionWorkItem = nil
           project.savedFileUrls.append(fileUrl)
-          coordinator.showPlayer(for: project)
+          coordinator.showPlayer(for: project, isStreaming: false)
         }
       }
     }
@@ -123,7 +126,7 @@ final class MusicEditorViewModel: MusicEditorOutput {
   }
 
   func openPlayerTapped() {
-    coordinator.showPlayer(for: project)
+    coordinator.showPlayer(for: project, isStreaming: true)
   }
 
   func playAll() {

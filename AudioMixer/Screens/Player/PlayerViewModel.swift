@@ -7,16 +7,7 @@ import Foundation
 final class PlayerViewModel: PlayerOutput {
   private let screenRecorder: ScreenRecorder
   private let coordinator: PlayerCoordinator
-  private lazy var player: AVAudioPlayer? = {
-    Timer.scheduledTimer(
-      timeInterval: 1.0,
-      target: self,
-      selector: #selector(updatePlayedTime),
-      userInfo: nil,
-      repeats: true
-    )
-    return try? AVAudioPlayer(contentsOf: trackUrl)
-  }()
+  private var player: MusicVisualizerAudioControlling?
 
   private var trackUrl: URL {
     project.trackUrl?.currentDocumentsDirectory ?? project.trackUrl ?? URL(string: "https://ya.ru")! // TODO: fix
@@ -24,8 +15,9 @@ final class PlayerViewModel: PlayerOutput {
 
   weak var view: PlayerInput?
 
-  private(set) lazy var trackName: String = trackUrl.lastPathComponent.replacingOccurrences(of: ".caf", with: "")
-  private(set) lazy var trackDuration: CGFloat = player?.duration ?? .zero
+  let isStreaming: Bool
+  private(set) lazy var trackName: String = player?.isStreaming == true ? project.name : trackUrl.lastPathComponent.replacingOccurrences(of: ".caf", with: "")
+  private(set) lazy var trackDuration: CGFloat = player?.audioDuration ?? .zero
 
   var isPlaying = CurrentValueSubject<Bool, Never>(false)
   var playedTime = CurrentValueSubject<CGFloat, Never>(.zero)
@@ -34,11 +26,15 @@ final class PlayerViewModel: PlayerOutput {
   init(
     screenRecorder: ScreenRecorder,
     project: ProjectModel,
+    audioController: MusicVisualizerAudioControlling?,
     coordinator: PlayerCoordinator
   ) {
     self.screenRecorder = screenRecorder
     self.project = project
     self.coordinator = coordinator
+    self.player = audioController
+    self.isStreaming = audioController?.isStreaming ?? false
+    setupTimer()
   }
 
   func backTapped() {
@@ -56,11 +52,14 @@ final class PlayerViewModel: PlayerOutput {
     }
     if isPlaying.value {
       player.pause()
-      screenRecorder.stopRecording()
+      if !player.isStreaming {
+        screenRecorder.stopRecording()
+      }
     } else {
-      player.prepareToPlay()
-      player.play()
-      screenRecorder.startRecording()
+      _ = player.play()
+      if !player.isStreaming {
+        screenRecorder.startRecording()
+      }
     }
     isPlaying.send(!isPlaying.value)
   }
@@ -70,11 +69,22 @@ final class PlayerViewModel: PlayerOutput {
   func nextTrackTapped() {}
 
   func newTimingValue(_ value: CGFloat) {
-    player?.play(atTime: value)
+    player?.seek(to: 0)
+  }
+
+  private func setupTimer() {
+    guard player?.isStreaming == false else { return }
+    Timer.scheduledTimer(
+      timeInterval: 1.0,
+      target: self,
+      selector: #selector(updatePlayedTime),
+      userInfo: nil,
+      repeats: true
+    )
   }
 
   @objc
   private func updatePlayedTime() {
-    playedTime.send(player?.currentTime ?? .zero)
+    playedTime.send(player?.currentPlayingTime ?? .zero)
   }
 }

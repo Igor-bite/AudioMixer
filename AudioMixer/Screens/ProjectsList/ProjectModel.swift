@@ -11,7 +11,7 @@ final class ProjectModel: Hashable, Codable {
   var savedFileUrls: [URL]
 
   var trackUrl: URL? {
-    savedFileUrls.first
+    savedFileUrls.last
   }
 
   init(

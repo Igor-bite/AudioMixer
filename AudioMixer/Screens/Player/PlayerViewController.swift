@@ -14,12 +14,17 @@ final class PlayerViewController: UIViewController {
     tintColor: .white
   )
 
-  private lazy var downloadButton = makeButton(
-    image: Asset.downloadArrow.image,
-    action: #selector(downloadTapped),
-    backgroundColor: .accentColor,
-    tintColor: .black
-  )
+  private lazy var downloadButton = {
+    let b = makeButton(
+      image: Asset.downloadArrow.image,
+      action: #selector(downloadTapped),
+      backgroundColor: .accentColor,
+      tintColor: .black
+    )
+    b.alpha = viewModel.isStreaming ? 0.5 : 1
+    b.isUserInteractionEnabled = !viewModel.isStreaming
+    return b
+  }()
 
   private lazy var trackNameTextField = {
     let field = UITextField(frame: .zero)
@@ -37,19 +42,29 @@ final class PlayerViewController: UIViewController {
     tintColor: .accentColor
   )
 
-  private lazy var previousTrackButton = makeButton(
-    image: UIImage(systemName: "backward.fill"),
-    action: #selector(previousTrackTapped),
-    backgroundColor: .clear,
-    tintColor: .accentColor
-  )
+  private lazy var previousTrackButton = {
+    let b = makeButton(
+      image: UIImage(systemName: "backward.fill"),
+      action: #selector(previousTrackTapped),
+      backgroundColor: .clear,
+      tintColor: .accentColor
+    )
+    b.alpha = viewModel.isStreaming ? 0.5 : 1
+    b.isUserInteractionEnabled = !viewModel.isStreaming
+    return b
+  }()
 
-  private lazy var nextTrackButton = makeButton(
-    image: UIImage(systemName: "forward.fill"),
-    action: #selector(nextTrackTapped),
-    backgroundColor: .clear,
-    tintColor: .accentColor
-  )
+  private lazy var nextTrackButton = {
+    let b = makeButton(
+      image: UIImage(systemName: "forward.fill"),
+      action: #selector(nextTrackTapped),
+      backgroundColor: .clear,
+      tintColor: .accentColor
+    )
+    b.alpha = viewModel.isStreaming ? 0.5 : 1
+    b.isUserInteractionEnabled = !viewModel.isStreaming
+    return b
+  }()
 
   private lazy var currentTimeLabel = {
     let label = UILabel()

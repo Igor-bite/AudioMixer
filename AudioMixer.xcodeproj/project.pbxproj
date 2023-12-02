@@ -83,6 +83,7 @@
 		0AB13DA92B1A7CD900D4DB3E /* CancellableBag.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AB13DA82B1A7CD900D4DB3E /* CancellableBag.swift */; };
 		0AB13DAB2B1AFD6A00D4DB3E /* MusicVisualizerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AB13DAA2B1AFD6A00D4DB3E /* MusicVisualizerView.swift */; };
 		0AB13DAD2B1AFFD100D4DB3E /* ScreenRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AB13DAC2B1AFFD100D4DB3E /* ScreenRecorder.swift */; };
+		0AB13DAF2B1B19AB00D4DB3E /* AVAudioPlayer+MusicVisualizerAudioControlling.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AB13DAE2B1B19AB00D4DB3E /* AVAudioPlayer+MusicVisualizerAudioControlling.swift */; };
 		0AE1EE942B1357E100363CA8 /* MusicEditorViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AE1EE932B1357E100363CA8 /* MusicEditorViewModel.swift */; };
 		0AE1EE9A2B138A8A00363CA8 /* AlertPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AE1EE992B138A8A00363CA8 /* AlertPresenter.swift */; };
 		0AE1EE9F2B13946000363CA8 /* MusicEditorProtocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AE1EE9E2B13946000363CA8 /* MusicEditorProtocols.swift */; };
@@ -166,6 +167,7 @@
 		0AB13DA82B1A7CD900D4DB3E /* CancellableBag.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CancellableBag.swift; sourceTree = "<group>"; };
 		0AB13DAA2B1AFD6A00D4DB3E /* MusicVisualizerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MusicVisualizerView.swift; sourceTree = "<group>"; };
 		0AB13DAC2B1AFFD100D4DB3E /* ScreenRecorder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenRecorder.swift; sourceTree = "<group>"; };
+		0AB13DAE2B1B19AB00D4DB3E /* AVAudioPlayer+MusicVisualizerAudioControlling.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AVAudioPlayer+MusicVisualizerAudioControlling.swift"; sourceTree = "<group>"; };
 		0AE1EE932B1357E100363CA8 /* MusicEditorViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MusicEditorViewModel.swift; sourceTree = "<group>"; };
 		0AE1EE992B138A8A00363CA8 /* AlertPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertPresenter.swift; sourceTree = "<group>"; };
 		0AE1EE9E2B13946000363CA8 /* MusicEditorProtocols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MusicEditorProtocols.swift; sourceTree = "<group>"; };
@@ -222,6 +224,7 @@
 				0AE1EE982B138A7800363CA8 /* Audio */,
 				0AE1EE972B138A6D00363CA8 /* Logging */,
 				0A72505A2B1A2F8200E83C32 /* ProjectsSaver.swift */,
+				0AB13DAE2B1B19AB00D4DB3E /* AVAudioPlayer+MusicVisualizerAudioControlling.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -600,6 +603,7 @@
 				0AB13DAD2B1AFFD100D4DB3E /* ScreenRecorder.swift in Sources */,
 				0A0DF4D82AF7E5E100BEFA70 /* UIScreenExtensions.swift in Sources */,
 				0A72505B2B1A2F8200E83C32 /* ProjectsSaver.swift in Sources */,
+				0AB13DAF2B1B19AB00D4DB3E /* AVAudioPlayer+MusicVisualizerAudioControlling.swift in Sources */,
 				0AB13DA52B1A752000D4DB3E /* PlayerCoordinator.swift in Sources */,
 				0AB13DA12B1A750500D4DB3E /* PlayerViewController.swift in Sources */,
 				0A22C24F2AF5B21300AC88D2 /* AudioMixer.swift in Sources */,

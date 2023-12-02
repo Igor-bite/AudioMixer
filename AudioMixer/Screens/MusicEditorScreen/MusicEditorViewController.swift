@@ -75,6 +75,7 @@ final class MusicEditorViewController: UIViewController, MusicEditorInput {
 
     setupUI()
     setupBinding()
+    viewModel.viewDidLoad()
   }
 
   override func viewDidAppear(_ animated: Bool) {

@@ -11,6 +11,7 @@ protocol PlayerOutput {
   var project: ProjectModel { get }
   var trackName: String { get }
   var trackDuration: CGFloat { get }
+  var isStreaming: Bool { get }
   var isPlaying: CurrentValueSubject<Bool, Never> { get }
   var playedTime: CurrentValueSubject<CGFloat, Never> { get }
 

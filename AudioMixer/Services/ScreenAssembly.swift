@@ -39,11 +39,12 @@ final class ScreenAssembly {
     )
   }
 
-  func makePlayer(for project: ProjectModel) -> PlayerCoordinator {
+  func makePlayer(for project: ProjectModel, isStreaming: Bool) -> PlayerCoordinator {
     PlayerCoordinator(
       screenRecorder: screenRecorder,
       project: project,
       screenAssembly: self,
+      isStreaming: isStreaming,
       navigationController: rootNavigationController
     )
   }

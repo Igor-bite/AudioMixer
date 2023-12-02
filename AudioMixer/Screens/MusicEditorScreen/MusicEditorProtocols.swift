@@ -19,6 +19,7 @@ protocol MusicEditorOutput {
   var isCompositionRecording: Bool { get }
   var isRecordingVoice: CurrentValueSubject<Bool, Never> { get }
 
+  func viewDidLoad()
   func viewDidAppear()
   func viewDidDisappear()
 
