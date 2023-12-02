@@ -69,6 +69,8 @@ final class PlayerViewController: UIViewController {
     return label
   }()
 
+  private lazy var musicVisualizer = MusicVisualizerView(project: viewModel.project)
+
   private var bag = CancellableBag()
 
   init(
@@ -106,6 +108,7 @@ final class PlayerViewController: UIViewController {
   private func setupUI() {
     view.backgroundColor = .black
     view.addSubviews([
+      musicVisualizer,
       backButton,
       trackNameTextField,
       downloadButton,
@@ -163,6 +166,11 @@ final class PlayerViewController: UIViewController {
       make.size.equalTo(CGSize(width: 36, height: 36))
       make.centerY.equalTo(currentTimeLabel)
       make.left.equalTo(playPauseButton.snp.right)
+    }
+
+    musicVisualizer.snp.makeConstraints { make in
+      make.left.right.equalToSuperview()
+      make.top.bottom.equalTo(view.safeAreaLayoutGuide)
     }
   }
 

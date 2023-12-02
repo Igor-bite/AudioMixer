@@ -8,6 +8,7 @@ protocol PlayerInput: AnyObject {}
 
 // ViewModel
 protocol PlayerOutput {
+  var project: ProjectModel { get }
   var trackName: String { get }
   var trackDuration: CGFloat { get }
   var isPlaying: CurrentValueSubject<Bool, Never> { get }

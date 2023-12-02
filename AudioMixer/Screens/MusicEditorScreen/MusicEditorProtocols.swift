@@ -31,6 +31,7 @@ protocol MusicEditorOutput {
 
   func micRecordTapped()
   func recordSampleTapped()
+  func openPlayerTapped()
 
   func playAll()
   func pauseAll()

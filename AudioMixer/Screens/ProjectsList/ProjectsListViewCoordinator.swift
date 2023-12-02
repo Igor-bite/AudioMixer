@@ -32,10 +32,6 @@ final class ProjectsListViewCoordinator {
   }
 
   func openEditor(for project: ProjectModel) {
-    if let fileUrl = project.savedFileUrls.first {
-      screenAssembly.makePlayer(for: fileUrl.currentDocumentsDirectory ?? fileUrl).start()
-    } else {
-      screenAssembly.makeMusicEditor(for: project).start()
-    }
+    screenAssembly.makeMusicEditor(for: project).start()
   }
 }

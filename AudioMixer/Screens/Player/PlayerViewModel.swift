@@ -7,7 +7,6 @@ import Foundation
 final class PlayerViewModel: PlayerOutput {
   private let screenRecorder: ScreenRecorder
   private let coordinator: PlayerCoordinator
-  private let trackUrl: URL
   private lazy var player: AVAudioPlayer? = {
     Timer.scheduledTimer(
       timeInterval: 1.0,
@@ -19,6 +18,10 @@ final class PlayerViewModel: PlayerOutput {
     return try? AVAudioPlayer(contentsOf: trackUrl)
   }()
 
+  private var trackUrl: URL {
+    project.trackUrl?.currentDocumentsDirectory ?? project.trackUrl ?? URL(string: "https://ya.ru")! // TODO: fix
+  }
+
   weak var view: PlayerInput?
 
   private(set) lazy var trackName: String = trackUrl.lastPathComponent.replacingOccurrences(of: ".caf", with: "")
@@ -26,14 +29,15 @@ final class PlayerViewModel: PlayerOutput {
 
   var isPlaying = CurrentValueSubject<Bool, Never>(false)
   var playedTime = CurrentValueSubject<CGFloat, Never>(.zero)
+  let project: ProjectModel
 
   init(
     screenRecorder: ScreenRecorder,
-    trackUrl: URL,
+    project: ProjectModel,
     coordinator: PlayerCoordinator
   ) {
     self.screenRecorder = screenRecorder
-    self.trackUrl = trackUrl
+    self.project = project
     self.coordinator = coordinator
   }
 

@@ -4,18 +4,18 @@ import UIKit
 
 final class PlayerCoordinator {
   private let screenRecorder: ScreenRecorder
-  private let trackUrl: URL
+  private let project: ProjectModel
   private let screenAssembly: ScreenAssembly
   private let navigationController: UINavigationController
 
   init(
     screenRecorder: ScreenRecorder,
-    trackUrl: URL,
+    project: ProjectModel,
     screenAssembly: ScreenAssembly,
     navigationController: UINavigationController
   ) {
     self.screenRecorder = screenRecorder
-    self.trackUrl = trackUrl
+    self.project = project
     self.screenAssembly = screenAssembly
     self.navigationController = navigationController
   }
@@ -23,7 +23,7 @@ final class PlayerCoordinator {
   func start() {
     let viewModel = PlayerViewModel(
       screenRecorder: screenRecorder,
-      trackUrl: trackUrl,
+      project: project,
       coordinator: self
     )
     screenRecorder.completion = { [weak self] url in

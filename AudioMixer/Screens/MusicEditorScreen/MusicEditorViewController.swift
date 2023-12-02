@@ -27,6 +27,11 @@ final class MusicEditorViewController: UIViewController, MusicEditorInput {
     action: #selector(playPauseTapped)
   )
 
+  private lazy var showInPlayerButton = makeButton(
+    image: UIImage(systemName: "paintpalette.fill"),
+    action: #selector(openPlayerTapped)
+  )
+
   private lazy var layersButton = {
     let button = DisclosureButton()
     button.action = layersButtonTapped
@@ -121,6 +126,7 @@ final class MusicEditorViewController: UIViewController, MusicEditorInput {
       recordMicrophoneButton,
       recordSampleButton,
       playPauseButton,
+      showInPlayerButton,
       layersButton
     )
 
@@ -164,6 +170,12 @@ final class MusicEditorViewController: UIViewController, MusicEditorInput {
 
     recordMicrophoneButton.snp.makeConstraints { make in
       make.right.equalTo(recordSampleButton.snp.left).offset(-8)
+      make.bottom.equalTo(view.safeAreaLayoutGuide).offset(-16)
+      make.size.equalTo(CGSize(width: 36, height: 36))
+    }
+
+    showInPlayerButton.snp.makeConstraints { make in
+      make.right.equalTo(recordMicrophoneButton.snp.left).offset(-8)
       make.bottom.equalTo(view.safeAreaLayoutGuide).offset(-16)
       make.size.equalTo(CGSize(width: 36, height: 36))
     }
@@ -216,6 +228,11 @@ final class MusicEditorViewController: UIViewController, MusicEditorInput {
     FeedbackGenerator.selectionChanged()
     viewModel.recordSampleTapped()
     recordSampleButton.backgroundColor = viewModel.isCompositionRecording ? .red : .white
+  }
+
+  @objc
+  private func openPlayerTapped() {
+    viewModel.openPlayerTapped()
   }
 
   @objc
@@ -376,11 +393,12 @@ final class MusicEditorViewController: UIViewController, MusicEditorInput {
     return view
   }
 
-  private func makeButton(image: UIImage, action: Selector) -> UIButton {
+  private func makeButton(image: UIImage?, action: Selector) -> UIButton {
     let button = UIButton()
     button.smoothCornerRadius = .inset4
     button.backgroundColor = .white
     button.setImage(image, for: .normal)
+    button.tintColor = .black
     button.addTarget(self, action: action, for: .touchUpInside)
     return button
   }

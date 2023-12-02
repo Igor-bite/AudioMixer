@@ -1,7 +1,7 @@
 // Created with love by Igor Klyuzhev in 2023
 
 import AVFoundation
-import Foundation
+import UIKit
 
 enum SampleType: String, Codable {
   case guitar
@@ -19,6 +19,42 @@ enum SampleType: String, Codable {
       return "Ударные"
     case .voice:
       return "Вокал"
+    }
+  }
+
+  var shapeImage: UIImage {
+    switch self {
+    case .guitar:
+      let images = [
+        Asset.Shapes.linesStrange.image,
+        Asset.Shapes.linesDiagonal.image,
+        Asset.Shapes.linesHorizontal.image,
+        Asset.Shapes.tetraedrFilled.image,
+        Asset.Shapes.tetraedrWhite.image,
+      ]
+      return images.randomElement() ?? images[0]
+    case .trumpet:
+      let images = [
+        Asset.Shapes.sun.image,
+        Asset.Shapes.sunFilled.image,
+        Asset.Shapes.sunOutline.image,
+      ]
+      return images.randomElement() ?? images[0]
+    case .drum:
+      let images = [
+        Asset.Shapes.circleFilled.image,
+        Asset.Shapes.circleOutline.image,
+        Asset.Shapes.dots.image,
+        Asset.Shapes.tetraedrGreen.image,
+      ]
+      return images.randomElement() ?? images[0]
+    case .voice:
+      let images = [
+        Asset.Shapes.curl1.image,
+        Asset.Shapes.curl2.image,
+        Asset.Shapes.curl3.image,
+      ]
+      return images.randomElement() ?? images[0]
     }
   }
 }

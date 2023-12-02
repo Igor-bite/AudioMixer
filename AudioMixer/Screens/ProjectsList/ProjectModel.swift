@@ -10,6 +10,10 @@ final class ProjectModel: Hashable, Codable {
   var layers: [LayerModel]
   var savedFileUrls: [URL]
 
+  var trackUrl: URL? {
+    savedFileUrls.first
+  }
+
   init(
     id: UUID = .init(),
     name: String,

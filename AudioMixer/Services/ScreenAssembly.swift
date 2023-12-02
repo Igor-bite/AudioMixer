@@ -39,10 +39,10 @@ final class ScreenAssembly {
     )
   }
 
-  func makePlayer(for fileUrl: URL) -> PlayerCoordinator {
+  func makePlayer(for project: ProjectModel) -> PlayerCoordinator {
     PlayerCoordinator(
       screenRecorder: screenRecorder,
-      trackUrl: fileUrl,
+      project: project,
       screenAssembly: self,
       navigationController: rootNavigationController
     )

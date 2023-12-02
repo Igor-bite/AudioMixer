@@ -110,15 +110,20 @@ final class MusicEditorViewModel: MusicEditorOutput {
       guard let self else { return }
       audioMixer.renderToFile(isStart: isCompositionRecording) { fileUrl in
         DispatchQueue.main.async { [weak self] in
-          self?.recordCompositionWorkItem = nil
-          self?.project.savedFileUrls.append(fileUrl)
-          self?.coordinator.showSharing(for: fileUrl)
+          guard let self else { return }
+          self.recordCompositionWorkItem = nil
+          project.savedFileUrls.append(fileUrl)
+          coordinator.showPlayer(for: project)
         }
       }
     }
     self.recordCompositionWorkItem = recordCompositionWorkItem
     DispatchQueue.main.asyncAfter(deadline: .now() + 0.2, execute: recordCompositionWorkItem)
     return isCompositionRecording ? playAll() : pauseAll()
+  }
+
+  func openPlayerTapped() {
+    coordinator.showPlayer(for: project)
   }
 
   func playAll() {

@@ -47,7 +47,7 @@ final class MusicEditorCoordinator {
     navigationController.pushViewController(viewController, animated: true)
   }
 
-  func showSharing(for fileURL: URL) {
-    screenAssembly.makePlayer(for: fileURL).start()
+  func showPlayer(for project: ProjectModel) {
+    screenAssembly.makePlayer(for: project).start()
   }
 }
